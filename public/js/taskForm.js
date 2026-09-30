@@ -13,6 +13,7 @@ const deleteBtn = document.getElementById('delete-btn');
 const detailSections = document.getElementById('detail-sections');
 
 let recurrenceType = 'quarterly';
+let pendingFiles = [];
 
 function setRecurrenceType(type) {
   recurrenceType = type;
@@ -47,6 +48,8 @@ function fillForm(task) {
 
 function renderAttachments(attachments) {
   const list = document.getElementById('attachment-list');
+  const hint = document.getElementById('attachment-hint');
+  if (hint) hint.style.display = 'none';
   if (attachments.length === 0) {
     list.innerHTML = '<li class="muted">Ei liitteitä.</li>';
     return;
@@ -64,6 +67,32 @@ function renderAttachments(attachments) {
     btn.addEventListener('click', async () => {
       await api.deleteAttachment(btn.dataset.attId);
       refreshTask();
+    });
+  });
+}
+
+function renderPendingFiles() {
+  const list = document.getElementById('attachment-list');
+  const hint = document.getElementById('attachment-hint');
+  if (pendingFiles.length === 0) {
+    list.innerHTML = '';
+    if (hint) hint.style.display = '';
+    return;
+  }
+  if (hint) hint.style.display = 'none';
+  list.innerHTML = pendingFiles
+    .map(
+      (f, i) => `
+      <li>
+        <span>${escapeHtml(f.name)}</span>
+        <button type="button" class="btn secondary small" data-pending-index="${i}">Poista</button>
+      </li>`
+    )
+    .join('');
+  list.querySelectorAll('button[data-pending-index]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      pendingFiles.splice(Number(btn.dataset.pendingIndex), 1);
+      renderPendingFiles();
     });
   });
 }
@@ -108,6 +137,7 @@ async function init() {
     await refreshTask();
   } else {
     setRecurrenceType('quarterly');
+    renderPendingFiles();
   }
 }
 
@@ -131,6 +161,13 @@ form.addEventListener('submit', async (e) => {
       window.location.href = `task-form.html?id=${taskId}`;
     } else {
       const created = await api.createTask(data);
+      if (pendingFiles.length > 0) {
+        try {
+          await api.uploadAttachments(created.id, pendingFiles);
+        } catch (err) {
+          alert(`Tehtävä tallennettiin, mutta liitteiden lataus epäonnistui: ${err.message}`);
+        }
+      }
       window.location.href = `task-form.html?id=${created.id}`;
     }
   } catch (err) {
@@ -159,12 +196,18 @@ document.getElementById('complete-btn').addEventListener('click', async () => {
 document.getElementById('attachment-input').addEventListener('change', async (e) => {
   const files = Array.from(e.target.files);
   if (files.length === 0) return;
-  try {
-    await api.uploadAttachments(taskId, files);
-    e.target.value = '';
-    refreshTask();
-  } catch (err) {
-    alert(err.message);
+  e.target.value = '';
+
+  if (isEditing) {
+    try {
+      await api.uploadAttachments(taskId, files);
+      refreshTask();
+    } catch (err) {
+      alert(err.message);
+    }
+  } else {
+    pendingFiles = pendingFiles.concat(files);
+    renderPendingFiles();
   }
 });
 
