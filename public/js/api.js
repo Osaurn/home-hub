@@ -53,6 +53,21 @@ const QUARTER_LABELS = {
 
 const QUARTER_SHORT = { 1: 'Q1', 2: 'Q2', 3: 'Q3', 4: 'Q4' };
 
+const MONTH_NAMES = {
+  1: 'Tammikuu',
+  2: 'Helmikuu',
+  3: 'Maaliskuu',
+  4: 'Huhtikuu',
+  5: 'Toukokuu',
+  6: 'Kesäkuu',
+  7: 'Heinäkuu',
+  8: 'Elokuu',
+  9: 'Syyskuu',
+  10: 'Lokakuu',
+  11: 'Marraskuu',
+  12: 'Joulukuu',
+};
+
 const STATUS_LABELS = {
   due: 'Ajankohtainen',
   overdue: 'Myöhässä',
@@ -64,6 +79,9 @@ function formatCheckpoint(checkpoint) {
   if (checkpoint.type === 'quarterly') {
     return `${QUARTER_SHORT[checkpoint.quarter]} ${checkpoint.year}`;
   }
+  if (checkpoint.type === 'monthly') {
+    return `${MONTH_NAMES[checkpoint.month]} ${checkpoint.year}`;
+  }
   if (!checkpoint.lastCompleted) {
     return 'Ei koskaan tehty';
   }
@@ -73,6 +91,9 @@ function formatCheckpoint(checkpoint) {
 function formatRecurrence(task) {
   if (task.recurrence_type === 'quarterly') {
     return (task.quarters || []).map((q) => QUARTER_SHORT[q]).join(', ');
+  }
+  if (task.recurrence_type === 'monthly') {
+    return (task.months || []).map((m) => MONTH_NAMES[m]).join(', ');
   }
   return `Joka ${task.interval_min_years}–${task.interval_max_years} vuosi`;
 }

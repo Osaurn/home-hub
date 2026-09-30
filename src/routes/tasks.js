@@ -14,7 +14,7 @@ function validateTaskBody(body) {
     err.status = 400;
     throw err;
   }
-  if (!['quarterly', 'interval'].includes(recurrence_type)) {
+  if (!['quarterly', 'monthly', 'interval'].includes(recurrence_type)) {
     const err = new Error('Virheellinen toistuvuustyyppi');
     err.status = 400;
     throw err;
@@ -33,6 +33,26 @@ function validateTaskBody(body) {
       instructions: body.instructions || null,
       recurrence_type,
       quarters: JSON.stringify([...new Set(quarters)].sort()),
+      months: null,
+      interval_min_years: null,
+      interval_max_years: null,
+    };
+  }
+
+  if (recurrence_type === 'monthly') {
+    const months = Array.isArray(body.months) ? body.months : [];
+    const valid = months.every((m) => Number.isInteger(m) && m >= 1 && m <= 12);
+    if (months.length === 0 || !valid) {
+      const err = new Error('Valitse vähintään yksi kuukausi');
+      err.status = 400;
+      throw err;
+    }
+    return {
+      title: title.trim(),
+      instructions: body.instructions || null,
+      recurrence_type,
+      quarters: null,
+      months: JSON.stringify([...new Set(months)].sort((a, b) => a - b)),
       interval_min_years: null,
       interval_max_years: null,
     };
@@ -50,6 +70,7 @@ function validateTaskBody(body) {
     instructions: body.instructions || null,
     recurrence_type,
     quarters: null,
+    months: null,
     interval_min_years: min,
     interval_max_years: max,
   };
@@ -59,6 +80,7 @@ function serializeTask(task) {
   return {
     ...task,
     quarters: task.quarters ? JSON.parse(task.quarters) : null,
+    months: task.months ? JSON.parse(task.months) : null,
   };
 }
 
@@ -87,8 +109,8 @@ router.post('/', (req, res) => {
   const data = validateTaskBody(req.body);
   const result = db
     .prepare(
-      `INSERT INTO tasks (title, instructions, recurrence_type, quarters, interval_min_years, interval_max_years)
-       VALUES (@title, @instructions, @recurrence_type, @quarters, @interval_min_years, @interval_max_years)`
+      `INSERT INTO tasks (title, instructions, recurrence_type, quarters, months, interval_min_years, interval_max_years)
+       VALUES (@title, @instructions, @recurrence_type, @quarters, @months, @interval_min_years, @interval_max_years)`
     )
     .run(data);
   const tagIds = (Array.isArray(req.body.tag_ids) ? req.body.tag_ids : []).map(Number);
@@ -105,7 +127,7 @@ router.put('/:id', (req, res) => {
   const data = validateTaskBody(req.body);
   db.prepare(
     `UPDATE tasks SET title = @title, instructions = @instructions, recurrence_type = @recurrence_type,
-       quarters = @quarters, interval_min_years = @interval_min_years, interval_max_years = @interval_max_years
+       quarters = @quarters, months = @months, interval_min_years = @interval_min_years, interval_max_years = @interval_max_years
      WHERE id = @id`
   ).run({ ...data, id: req.params.id });
 

@@ -2,8 +2,9 @@ CREATE TABLE IF NOT EXISTS tasks (
   id                  INTEGER PRIMARY KEY AUTOINCREMENT,
   title               TEXT NOT NULL,
   instructions        TEXT,
-  recurrence_type     TEXT NOT NULL CHECK (recurrence_type IN ('quarterly','interval')),
+  recurrence_type     TEXT NOT NULL CHECK (recurrence_type IN ('quarterly','monthly','interval')),
   quarters            TEXT,
+  months              TEXT,
   interval_min_years  INTEGER,
   interval_max_years  INTEGER,
   created_at          TEXT NOT NULL DEFAULT (datetime('now'))

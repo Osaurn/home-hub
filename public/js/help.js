@@ -23,6 +23,7 @@
     <p>Paina "+ Lisää tehtävä". Valitse toistuvuus:</p>
     <ul>
       <li><strong>Vuosineljänneksittäin</strong> — tehtävä toistuu joka vuosi valitsemillasi vuosineljänneksillä (esim. ilmansuodattimien vaihto keväällä ja syksyllä).</li>
+      <li><strong>Tarkka kuukausi</strong> — tehtävä toistuu joka vuosi tietyllä kuukaudella tai kuukausilla (esim. aina helmikuussa), jos vuosineljännes on liian karkea jako.</li>
       <li><strong>Muutaman vuoden välein</strong> — tehtävä toistuu harvemmin, esim. joka 3.–5. vuosi (esim. ulkoseinien maalaus). Sovellus muistuttaa, kun väli alkaa lähestyä ja merkitsee tehtävän myöhässä olevaksi, jos yläraja ylittyy.</li>
     </ul>
     <p>Ohjeet, tunnisteet ja liitteet voi lisätä heti samalla lomakkeella — kaikki tallentuu, kun painat "Tallenna".</p>

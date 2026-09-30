@@ -286,6 +286,21 @@ form.task-form textarea { min-height: 140px; resize: vertical; }
   margin: 0;
 }
 
+.months-check {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 12px;
+  margin-top: 6px;
+}
+
+.months-check label {
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
 .interval-fields {
   display: flex;
   gap: 16px;

@@ -46,6 +46,47 @@ test('quarterly task with multiple checkpoints tracks each independently', () =>
   assert.equal(q3.status, 'due');
 });
 
+test('monthly task is due when current month matches and no completion this year', () => {
+  const task = { recurrence_type: 'monthly', months: '[9]' };
+  const [cp] = computeTaskCheckpoints(task, [], NOW);
+  assert.equal(cp.status, 'due');
+  assert.equal(cp.month, 9);
+});
+
+test('monthly task is overdue once its month has passed uncompleted', () => {
+  const task = { recurrence_type: 'monthly', months: '[2]' };
+  const [cp] = computeTaskCheckpoints(task, [], NOW);
+  assert.equal(cp.status, 'overdue');
+});
+
+test('monthly task is upcoming if its month has not arrived yet', () => {
+  const task = { recurrence_type: 'monthly', months: '[12]' };
+  const [cp] = computeTaskCheckpoints(task, [], NOW);
+  assert.equal(cp.status, 'upcoming');
+});
+
+test('monthly task is satisfied by a completion in its month this year', () => {
+  const task = { recurrence_type: 'monthly', months: '[9]' };
+  const completions = [{ completed_at: '2026-09-05' }];
+  const [cp] = computeTaskCheckpoints(task, completions, NOW);
+  assert.equal(cp.status, 'done');
+});
+
+test('monthly completion does not carry over from a previous year', () => {
+  const task = { recurrence_type: 'monthly', months: '[9]' };
+  const completions = [{ completed_at: '2025-09-05' }];
+  const [cp] = computeTaskCheckpoints(task, completions, NOW);
+  assert.equal(cp.status, 'due');
+});
+
+test('monthly task with multiple checkpoints tracks each independently', () => {
+  const task = { recurrence_type: 'monthly', months: '[2,9]' };
+  const completions = [{ completed_at: '2026-02-10' }]; // satisfies February only
+  const [feb, sep] = computeTaskCheckpoints(task, completions, NOW);
+  assert.equal(feb.status, 'done');
+  assert.equal(sep.status, 'due');
+});
+
 test('interval task is upcoming inside the min-year window', () => {
   const task = { recurrence_type: 'interval', interval_min_years: 3, interval_max_years: 5 };
   const completions = [{ completed_at: '2025-01-01' }];

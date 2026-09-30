@@ -16,4 +16,7 @@ db.pragma('foreign_keys = ON');
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
 db.exec(schema);
 
+const { runMigrations } = require('./migrations');
+runMigrations(db);
+
 module.exports = { db, DATA_DIR, UPLOADS_DIR };

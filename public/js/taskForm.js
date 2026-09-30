@@ -6,8 +6,10 @@ const form = document.getElementById('task-form');
 const instructionsInput = document.getElementById('instructions');
 const previewEl = document.getElementById('instructions-preview');
 const toggleQuarterly = document.getElementById('toggle-quarterly');
+const toggleMonthly = document.getElementById('toggle-monthly');
 const toggleInterval = document.getElementById('toggle-interval');
 const quarterlyFields = document.getElementById('quarterly-fields');
+const monthlyFields = document.getElementById('monthly-fields');
 const intervalFields = document.getElementById('interval-fields');
 const deleteBtn = document.getElementById('delete-btn');
 const detailSections = document.getElementById('detail-sections');
@@ -23,12 +25,15 @@ const instructionsToggle = document.getElementById('instructions-toggle');
 function setRecurrenceType(type) {
   recurrenceType = type;
   toggleQuarterly.classList.toggle('active', type === 'quarterly');
+  toggleMonthly.classList.toggle('active', type === 'monthly');
   toggleInterval.classList.toggle('active', type === 'interval');
   quarterlyFields.style.display = type === 'quarterly' ? '' : 'none';
+  monthlyFields.style.display = type === 'monthly' ? '' : 'none';
   intervalFields.style.display = type === 'interval' ? '' : 'none';
 }
 
 toggleQuarterly.addEventListener('click', () => setRecurrenceType('quarterly'));
+toggleMonthly.addEventListener('click', () => setRecurrenceType('monthly'));
 toggleInterval.addEventListener('click', () => setRecurrenceType('interval'));
 
 function setInstructionsMode(mode) {
@@ -60,6 +65,10 @@ function fillForm(task) {
   if (task.recurrence_type === 'quarterly') {
     document.querySelectorAll('input[name="quarter"]').forEach((cb) => {
       cb.checked = task.quarters.includes(Number(cb.value));
+    });
+  } else if (task.recurrence_type === 'monthly') {
+    document.querySelectorAll('input[name="month"]').forEach((cb) => {
+      cb.checked = task.months.includes(Number(cb.value));
     });
   } else {
     document.getElementById('interval_min_years').value = task.interval_min_years;
@@ -224,6 +233,8 @@ form.addEventListener('submit', async (e) => {
   };
   if (recurrenceType === 'quarterly') {
     data.quarters = Array.from(document.querySelectorAll('input[name="quarter"]:checked')).map((cb) => Number(cb.value));
+  } else if (recurrenceType === 'monthly') {
+    data.months = Array.from(document.querySelectorAll('input[name="month"]:checked')).map((cb) => Number(cb.value));
   } else {
     data.interval_min_years = Number(document.getElementById('interval_min_years').value);
     data.interval_max_years = Number(document.getElementById('interval_max_years').value);

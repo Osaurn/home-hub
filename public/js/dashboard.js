@@ -3,18 +3,30 @@ let selectedQuarter = null;
 let quarterPanelTagFilter = null;
 let lastQuarterData = null;
 
+function quarterOfMonth(m) {
+  return Math.floor((m - 1) / 3) + 1;
+}
+
+function checkpointQuarter(checkpoint) {
+  if (checkpoint.type === 'quarterly') return checkpoint.quarter;
+  if (checkpoint.type === 'monthly') return quarterOfMonth(checkpoint.month);
+  return null;
+}
+
 function computeQuarterStatus(dashboard) {
   const status = { 1: 'upcoming', 2: 'upcoming', 3: 'upcoming', 4: 'upcoming' };
   const cq = dashboard.currentQuarter;
   for (let q = 1; q <= 4; q++) {
     if (q <= cq) status[q] = 'done';
   }
-  dashboard.overdueTasks
-    .filter((t) => t.checkpoint.type === 'quarterly')
-    .forEach((t) => { status[t.checkpoint.quarter] = 'overdue'; });
-  dashboard.dueTasks
-    .filter((t) => t.checkpoint.type === 'quarterly')
-    .forEach((t) => { status[t.checkpoint.quarter] = 'due'; });
+  dashboard.overdueTasks.forEach((t) => {
+    const q = checkpointQuarter(t.checkpoint);
+    if (q) status[q] = 'overdue';
+  });
+  dashboard.dueTasks.forEach((t) => {
+    const q = checkpointQuarter(t.checkpoint);
+    if (q) status[q] = 'due';
+  });
   return status;
 }
 

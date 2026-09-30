@@ -5,6 +5,10 @@ function getQuarter(date) {
   return Math.floor(date.getMonth() / 3) + 1;
 }
 
+function getMonthNumber(date) {
+  return date.getMonth() + 1;
+}
+
 function parseISODate(s) {
   const [y, m, d] = s.split('-').map(Number);
   return new Date(y, m - 1, d);
@@ -47,6 +51,30 @@ function computeQuarterlyCheckpoints(task, completions, now) {
   });
 }
 
+// A monthly task pins the obligation to one or more exact calendar
+// months (e.g. [2] means "every February") instead of a whole quarter.
+// Same satisfied/overdue/upcoming rules as quarterly, just at month
+// granularity, and likewise reset every January 1st.
+function computeMonthlyCheckpoints(task, completions, now) {
+  const months = JSON.parse(task.months || '[]');
+  const currentYear = now.getFullYear();
+  const currentMonth = getMonthNumber(now);
+  const thisYearMonths = completions
+    .map((c) => parseISODate(c.completed_at))
+    .filter((d) => d.getFullYear() === currentYear)
+    .map((d) => getMonthNumber(d));
+
+  return months.map((m) => {
+    const satisfied = thisYearMonths.some((cm) => cm >= m);
+    let status;
+    if (satisfied) status = 'done';
+    else if (currentMonth === m) status = 'due';
+    else if (currentMonth > m) status = 'overdue';
+    else status = 'upcoming';
+    return { type: 'monthly', month: m, year: currentYear, status };
+  });
+}
+
 function computeIntervalStatus(task, completions, now) {
   if (completions.length === 0) {
     return {
@@ -80,18 +108,22 @@ function computeIntervalStatus(task, completions, now) {
   };
 }
 
-// Returns an array of checkpoints for the task (quarterly tasks may have
-// several; interval tasks always have exactly one), each with a `status`
-// of 'due' | 'overdue' | 'upcoming' | 'done'.
+// Returns an array of checkpoints for the task (quarterly/monthly tasks
+// may have several; interval tasks always have exactly one), each with
+// a `status` of 'due' | 'overdue' | 'upcoming' | 'done'.
 function computeTaskCheckpoints(task, completions, now = new Date()) {
   if (task.recurrence_type === 'quarterly') {
     return computeQuarterlyCheckpoints(task, completions, now);
+  }
+  if (task.recurrence_type === 'monthly') {
+    return computeMonthlyCheckpoints(task, completions, now);
   }
   return [computeIntervalStatus(task, completions, now)];
 }
 
 module.exports = {
   getQuarter,
+  getMonthNumber,
   parseISODate,
   toISODate,
   addYears,
