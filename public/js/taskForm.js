@@ -16,6 +16,9 @@ let recurrenceType = 'quarterly';
 let pendingFiles = [];
 let allTags = [];
 let selectedTagIds = new Set();
+let instructionsMode = 'edit';
+
+const instructionsToggle = document.getElementById('instructions-toggle');
 
 function setRecurrenceType(type) {
   recurrenceType = type;
@@ -28,14 +31,30 @@ function setRecurrenceType(type) {
 toggleQuarterly.addEventListener('click', () => setRecurrenceType('quarterly'));
 toggleInterval.addEventListener('click', () => setRecurrenceType('interval'));
 
-instructionsInput.addEventListener('input', () => {
-  previewEl.innerHTML = instructionsInput.value ? marked.parse(instructionsInput.value) : '';
+function setInstructionsMode(mode) {
+  instructionsMode = mode;
+  if (mode === 'preview') {
+    instructionsInput.style.display = 'none';
+    previewEl.style.display = '';
+    previewEl.innerHTML = instructionsInput.value
+      ? marked.parse(instructionsInput.value)
+      : '<p class="muted">Ei ohjeita.</p>';
+    instructionsToggle.textContent = 'Muokkaa';
+  } else {
+    instructionsInput.style.display = '';
+    previewEl.style.display = 'none';
+    instructionsToggle.textContent = 'Esikatselu';
+  }
+}
+
+instructionsToggle.addEventListener('click', () => {
+  setInstructionsMode(instructionsMode === 'edit' ? 'preview' : 'edit');
 });
 
 function fillForm(task) {
   document.getElementById('title').value = task.title;
   instructionsInput.value = task.instructions || '';
-  previewEl.innerHTML = task.instructions ? marked.parse(task.instructions) : '';
+  setInstructionsMode(task.instructions ? 'preview' : 'edit');
   setRecurrenceType(task.recurrence_type);
 
   if (task.recurrence_type === 'quarterly') {
@@ -189,6 +208,7 @@ async function init() {
     await refreshTask();
   } else {
     setRecurrenceType('quarterly');
+    setInstructionsMode('edit');
     renderPendingFiles();
     renderTagChips();
   }

@@ -249,6 +249,15 @@ form.task-form label {
   margin: 14px 0 4px;
 }
 
+.field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field-header label { margin: 14px 0 4px; }
+
 form.task-form input[type="text"],
 form.task-form textarea,
 form.task-form input[type="number"],
@@ -344,11 +353,16 @@ form.task-form textarea { min-height: 140px; resize: vertical; }
 }
 
 .instructions-preview {
-  border-top: 1px dashed var(--border);
-  margin-top: 10px;
-  padding-top: 10px;
+  margin-top: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
   color: var(--text);
 }
+
+.instructions-preview :first-child { margin-top: 0; }
+.instructions-preview :last-child { margin-bottom: 0; }
 
 .attachment-list, .completion-list {
   list-style: none;

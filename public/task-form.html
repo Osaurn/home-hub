@@ -22,9 +22,12 @@
       <label for="title">Otsikko</label>
       <input type="text" id="title" name="title" required />
 
-      <label for="instructions">Ohjeet</label>
+      <div class="field-header">
+        <label for="instructions">Ohjeet</label>
+        <button type="button" class="btn secondary small" id="instructions-toggle">Esikatselu</button>
+      </div>
       <textarea id="instructions" name="instructions" placeholder="Kirjoita ohjeet (tukee Markdown-muotoilua)"></textarea>
-      <div class="instructions-preview" id="instructions-preview"></div>
+      <div class="instructions-preview" id="instructions-preview" style="display:none;"></div>
 
       <label>Toistuvuus</label>
       <div class="recurrence-toggle">
