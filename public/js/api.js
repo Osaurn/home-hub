@@ -25,6 +25,12 @@ const api = {
   completeTask: (id, data) => api.request('POST', `/api/tasks/${id}/complete`, data),
   deleteCompletion: (id) => api.request('DELETE', `/api/completions/${id}`),
 
+  getTags: () => api.request('GET', '/api/tags'),
+  createTag: (name) => api.request('POST', '/api/tags', { name }),
+  deleteTag: (id) => api.request('DELETE', `/api/tags/${id}`),
+
+  getHistory: (limit) => api.request('GET', `/api/history${limit ? `?limit=${limit}` : ''}`),
+
   deleteAttachment: (id) => api.request('DELETE', `/api/attachments/${id}`),
   async uploadAttachments(taskId, files) {
     const formData = new FormData();
@@ -82,4 +88,19 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str ?? '';
   return div.innerHTML;
+}
+
+function tagChipsHtml(tags) {
+  if (!tags || tags.length === 0) return '';
+  return `<div class="tag-pills">${tags
+    .map((t) => `<span class="tag-pill">${escapeHtml(t.name)}</span>`)
+    .join('')}</div>`;
+}
+
+function historyEntryHtml(entry) {
+  return `
+    <div class="card">
+      <div class="card-title"><a href="task-form.html?id=${entry.task_id}">${escapeHtml(entry.task_title)}</a></div>
+      <div class="card-meta">${entry.completed_at}${entry.note ? ' — ' + escapeHtml(entry.note) : ''}</div>
+    </div>`;
 }

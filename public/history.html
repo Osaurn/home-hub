@@ -3,28 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kaikki tehtävät — Kotihubi</title>
+  <title>Historia — Kotihubi</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="site">
     <a href="index.html" class="brand"><h1>🏡 Kotihubi</h1></a>
     <nav>
-      <a href="tasks.html" class="active">Kaikki tehtävät</a>
-      <a href="history.html">Historia</a>
+      <a href="tasks.html">Kaikki tehtävät</a>
+      <a href="history.html" class="active">Historia</a>
     </nav>
   </header>
 
   <main>
-    <div class="form-actions" style="margin-bottom: 16px;">
-      <a class="btn" href="task-form.html">+ Lisää tehtävä</a>
-    </div>
-    <div class="tag-filter-bar" id="tag-filter-bar"></div>
-    <div id="task-list"></div>
+    <h2>Historia</h2>
+    <p class="muted">Kaikki tehtävien tekokerrat aikajärjestyksessä, uusimmat ensin.</p>
+    <div id="history-list"></div>
   </main>
 
   <script src="js/api.js"></script>
   <script src="js/help.js"></script>
-  <script src="js/tasks.js"></script>
+  <script src="js/history.js"></script>
 </body>
 </html>

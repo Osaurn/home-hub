@@ -1,5 +1,7 @@
 let lastDashboard = null;
 let selectedQuarter = null;
+let quarterPanelTagFilter = null;
+let lastQuarterData = null;
 
 function computeQuarterStatus(dashboard) {
   const status = { 1: 'upcoming', 2: 'upcoming', 3: 'upcoming', 4: 'upcoming' };
@@ -38,6 +40,7 @@ function taskCardHtml(entry) {
         <div>
           <div class="card-title"><a href="task-form.html?id=${entry.taskId}">${escapeHtml(entry.title)}</a></div>
           <div class="card-meta">${escapeHtml(formatCheckpoint(entry.checkpoint))}</div>
+          ${tagChipsHtml(entry.tags)}
         </div>
         <span class="badge status-${entry.checkpoint.status}">${STATUS_LABELS[entry.checkpoint.status]}</span>
       </div>
@@ -46,6 +49,28 @@ function taskCardHtml(entry) {
         <a class="btn secondary small" href="task-form.html?id=${entry.taskId}">Näytä tiedot</a>
       </div>
     </div>`;
+}
+
+function uniqueTags(tasks) {
+  const map = new Map();
+  for (const t of tasks) {
+    for (const tag of t.tags || []) map.set(tag.id, tag.name);
+  }
+  return Array.from(map, ([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name, 'fi'));
+}
+
+function renderTagFilterBar(container, tags, activeId, onSelect) {
+  const allChip = `<button type="button" class="tag-chip filter-chip${activeId === null ? ' active' : ''}" data-tag-id="">Kaikki</button>`;
+  const chips = tags
+    .map(
+      (t) =>
+        `<button type="button" class="tag-chip filter-chip${activeId === t.id ? ' active' : ''}" data-tag-id="${t.id}">${escapeHtml(t.name)}</button>`
+    )
+    .join('');
+  container.innerHTML = allChip + chips;
+  container.querySelectorAll('.filter-chip').forEach((btn) => {
+    btn.addEventListener('click', () => onSelect(btn.dataset.tagId ? Number(btn.dataset.tagId) : null));
+  });
 }
 
 function renderTaskList(container, entries, emptyText) {
@@ -69,6 +94,7 @@ function renderClock(dashboard) {
 
 async function handleQuarterClick(q) {
   selectedQuarter = selectedQuarter === q ? null : q;
+  quarterPanelTagFilter = null;
   if (lastDashboard) renderClock(lastDashboard);
   await renderQuarterPanel();
 }
@@ -80,26 +106,44 @@ async function renderQuarterPanel() {
   if (!selectedQuarter) {
     section.style.display = 'none';
     panel.innerHTML = '';
+    lastQuarterData = null;
     return;
   }
 
   section.style.display = '';
   panel.innerHTML = '<p class="muted">Ladataan…</p>';
 
-  const data = await api.getQuarterTasks(selectedQuarter);
+  lastQuarterData = await api.getQuarterTasks(selectedQuarter);
+  renderQuarterPanelContent();
+}
+
+function renderQuarterPanelContent() {
+  const panel = document.getElementById('quarter-panel');
+  const data = lastQuarterData;
+  const tags = uniqueTags(data.tasks);
+  const filtered = quarterPanelTagFilter
+    ? data.tasks.filter((t) => (t.tags || []).some((tag) => tag.id === quarterPanelTagFilter))
+    : data.tasks;
   const listHtml =
-    data.tasks.length === 0
+    filtered.length === 0
       ? '<div class="empty-state">Ei tehtäviä tälle vuosineljännekselle.</div>'
-      : data.tasks.map(taskCardHtml).join('');
+      : filtered.map(taskCardHtml).join('');
 
   panel.innerHTML = `
     <div class="card-header" style="margin-bottom: 10px;">
       <h3 style="margin: 0;">${QUARTER_NAMES[selectedQuarter]} — ${escapeHtml(QUARTER_LABELS[selectedQuarter])} ${data.year}</h3>
       <button class="btn secondary small" id="close-quarter-panel">Sulje</button>
     </div>
+    ${tags.length > 0 ? '<div class="tag-filter-bar" id="quarter-tag-filter"></div>' : ''}
     ${listHtml}`;
 
   document.getElementById('close-quarter-panel').addEventListener('click', () => handleQuarterClick(selectedQuarter));
+  if (tags.length > 0) {
+    renderTagFilterBar(document.getElementById('quarter-tag-filter'), tags, quarterPanelTagFilter, (id) => {
+      quarterPanelTagFilter = id;
+      renderQuarterPanelContent();
+    });
+  }
   wireCompleteButtons(panel);
 }
 
@@ -111,6 +155,13 @@ async function loadDashboard() {
   renderTaskList(document.getElementById('overdue-list'), dashboard.overdueTasks, 'Ei myöhässä olevia tehtäviä.');
   renderTaskList(document.getElementById('due-list'), dashboard.dueTasks, 'Ei tällä hetkellä ajankohtaisia tehtäviä.');
   document.getElementById('overdue-section').style.display = dashboard.overdueTasks.length > 0 ? '' : 'none';
+
+  const recent = await api.getHistory(5);
+  const recentContainer = document.getElementById('recent-history-list');
+  recentContainer.innerHTML =
+    recent.length === 0
+      ? '<div class="empty-state">Ei vielä tehtyjä tehtäviä.</div>'
+      : recent.map(historyEntryHtml).join('');
 
   if (selectedQuarter) await renderQuarterPanel();
 }

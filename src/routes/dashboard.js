@@ -1,6 +1,7 @@
 const express = require('express');
 const { db } = require('../db/db');
 const { computeTaskCheckpoints, getQuarter, toISODate } = require('../lib/dueDateLogic');
+const { getTagsForTask } = require('../lib/tagHelpers');
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.get('/', (req, res) => {
     const completions = completionsByTask.get(task.id) || [];
     const checkpoints = computeTaskCheckpoints(task, completions, now);
     for (const checkpoint of checkpoints) {
-      const entry = { taskId: task.id, title: task.title, checkpoint };
+      const entry = { taskId: task.id, title: task.title, checkpoint, tags: getTagsForTask(db, task.id) };
       if (checkpoint.status === 'due') dueTasks.push(entry);
       else if (checkpoint.status === 'overdue') overdueTasks.push(entry);
     }
@@ -55,7 +56,13 @@ router.get('/quarters/:q', (req, res) => {
     if (!quarters.includes(q)) continue;
     const completions = completionsByTask.get(task.id) || [];
     const checkpoint = computeTaskCheckpoints(task, completions, now).find((cp) => cp.quarter === q);
-    result.push({ taskId: task.id, title: task.title, instructions: task.instructions, checkpoint });
+    result.push({
+      taskId: task.id,
+      title: task.title,
+      instructions: task.instructions,
+      checkpoint,
+      tags: getTagsForTask(db, task.id),
+    });
   }
 
   res.json({ quarter: q, year: now.getFullYear(), tasks: result });

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { db, UPLOADS_DIR } = require('../db/db');
 const { computeTaskCheckpoints } = require('../lib/dueDateLogic');
+const { getTagsForTask, syncTaskTags } = require('../lib/tagHelpers');
 
 const router = express.Router();
 
@@ -63,7 +64,7 @@ function serializeTask(task) {
 
 router.get('/', (req, res) => {
   const tasks = db.prepare('SELECT * FROM tasks ORDER BY title COLLATE NOCASE').all();
-  res.json(tasks.map(serializeTask));
+  res.json(tasks.map((t) => ({ ...serializeTask(t), tags: getTagsForTask(db, t.id) })));
 });
 
 router.get('/:id', (req, res) => {
@@ -76,9 +77,10 @@ router.get('/:id', (req, res) => {
   const attachments = db
     .prepare('SELECT * FROM attachments WHERE task_id = ? ORDER BY uploaded_at DESC')
     .all(task.id);
+  const tags = getTagsForTask(db, task.id);
   const checkpoints = computeTaskCheckpoints(task, completions);
 
-  res.json({ ...serializeTask(task), completions, attachments, checkpoints });
+  res.json({ ...serializeTask(task), completions, attachments, tags, checkpoints });
 });
 
 router.post('/', (req, res) => {
@@ -89,8 +91,11 @@ router.post('/', (req, res) => {
        VALUES (@title, @instructions, @recurrence_type, @quarters, @interval_min_years, @interval_max_years)`
     )
     .run(data);
+  const tagIds = (Array.isArray(req.body.tag_ids) ? req.body.tag_ids : []).map(Number);
+  syncTaskTags(db, result.lastInsertRowid, tagIds);
+
   const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(result.lastInsertRowid);
-  res.status(201).json(serializeTask(task));
+  res.status(201).json({ ...serializeTask(task), tags: getTagsForTask(db, task.id) });
 });
 
 router.put('/:id', (req, res) => {
@@ -104,8 +109,11 @@ router.put('/:id', (req, res) => {
      WHERE id = @id`
   ).run({ ...data, id: req.params.id });
 
+  const tagIds = (Array.isArray(req.body.tag_ids) ? req.body.tag_ids : []).map(Number);
+  syncTaskTags(db, req.params.id, tagIds);
+
   const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(req.params.id);
-  res.json(serializeTask(task));
+  res.json({ ...serializeTask(task), tags: getTagsForTask(db, task.id) });
 });
 
 router.delete('/:id', (req, res) => {

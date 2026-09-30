@@ -14,6 +14,8 @@ const detailSections = document.getElementById('detail-sections');
 
 let recurrenceType = 'quarterly';
 let pendingFiles = [];
+let allTags = [];
+let selectedTagIds = new Set();
 
 function setRecurrenceType(type) {
   recurrenceType = type;
@@ -71,6 +73,53 @@ function renderAttachments(attachments) {
   });
 }
 
+function renderTagChips() {
+  const container = document.getElementById('tag-chips');
+  if (allTags.length === 0) {
+    container.innerHTML = '<p class="muted">Ei vielä tunnisteita. Lisää uusi alta.</p>';
+    return;
+  }
+  container.innerHTML = allTags
+    .map(
+      (t) =>
+        `<button type="button" class="tag-chip toggle-chip${selectedTagIds.has(t.id) ? ' active' : ''}" data-tag-id="${t.id}">${escapeHtml(t.name)}</button>`
+    )
+    .join('');
+  container.querySelectorAll('.toggle-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.tagId);
+      if (selectedTagIds.has(id)) selectedTagIds.delete(id);
+      else selectedTagIds.add(id);
+      renderTagChips();
+    });
+  });
+}
+
+document.getElementById('new-tag-btn').addEventListener('click', async () => {
+  const input = document.getElementById('new-tag-input');
+  const name = input.value.trim();
+  if (!name) return;
+  try {
+    const tag = await api.createTag(name);
+    if (!allTags.some((t) => t.id === tag.id)) {
+      allTags.push(tag);
+      allTags.sort((a, b) => a.name.localeCompare(b.name, 'fi'));
+    }
+    selectedTagIds.add(tag.id);
+    input.value = '';
+    renderTagChips();
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+document.getElementById('new-tag-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    document.getElementById('new-tag-btn').click();
+  }
+});
+
 function renderPendingFiles() {
   const list = document.getElementById('attachment-list');
   const hint = document.getElementById('attachment-hint');
@@ -126,9 +175,12 @@ async function refreshTask() {
   fillForm(task);
   renderAttachments(task.attachments);
   renderCompletions(task.completions);
+  selectedTagIds = new Set((task.tags || []).map((t) => t.id));
+  renderTagChips();
 }
 
 async function init() {
+  allTags = await api.getTags();
   if (isEditing) {
     document.getElementById('page-title').textContent = 'Muokkaa tehtävää';
     deleteBtn.style.display = '';
@@ -138,6 +190,7 @@ async function init() {
   } else {
     setRecurrenceType('quarterly');
     renderPendingFiles();
+    renderTagChips();
   }
 }
 
@@ -147,6 +200,7 @@ form.addEventListener('submit', async (e) => {
     title: document.getElementById('title').value,
     instructions: instructionsInput.value,
     recurrence_type: recurrenceType,
+    tag_ids: Array.from(selectedTagIds),
   };
   if (recurrenceType === 'quarterly') {
     data.quarters = Array.from(document.querySelectorAll('input[name="quarter"]:checked')).map((cb) => Number(cb.value));

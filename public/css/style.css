@@ -39,6 +39,13 @@ header.site h1 {
   margin: 0;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
 header.site nav {
   display: flex;
   align-items: center;
@@ -372,10 +379,95 @@ form.task-form textarea { min-height: 140px; resize: vertical; }
 .task-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .task-row-meta { color: var(--muted); font-size: 0.88rem; }
+
+.tag-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.tag-pill {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+  padding: 7px 14px;
+  min-height: 36px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tag-chip.active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tag-filter-bar, .tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-filter-bar { margin-bottom: 16px; }
+
+.filter-chip-wrap { padding: 0; overflow: hidden; }
+
+.filter-chip-wrap .filter-chip-btn,
+.filter-chip-wrap .tag-chip-remove {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+}
+
+.filter-chip-wrap .filter-chip-btn { padding: 7px 6px 7px 14px; }
+
+.filter-chip-wrap .tag-chip-remove {
+  padding: 7px 12px 7px 6px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.filter-chip-wrap .tag-chip-remove:hover { color: var(--overdue); }
+
+.tag-add-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag-add-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
 
 @media (max-width: 600px) {
   main { padding: 16px; }

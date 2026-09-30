@@ -8,10 +8,10 @@
 </head>
 <body>
   <header class="site">
-    <h1>🏡 Kotihubi</h1>
+    <a href="index.html" class="brand"><h1>🏡 Kotihubi</h1></a>
     <nav>
-      <a href="index.html" class="active">Vuosikello</a>
       <a href="tasks.html">Kaikki tehtävät</a>
+      <a href="history.html">Historia</a>
     </nav>
   </header>
 
@@ -34,6 +34,14 @@
     <section>
       <h2 class="section-title">Tehtävät nyt</h2>
       <div id="due-list"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Viimeksi tehdyt</h2>
+      <div id="recent-history-list"></div>
+      <div class="form-actions" style="justify-content: flex-end; margin-top: 10px;">
+        <a class="btn secondary small" href="history.html">Näytä koko historia →</a>
+      </div>
     </section>
   </main>
 
