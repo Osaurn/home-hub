@@ -22,6 +22,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  overflow-x: hidden;
 }
 
 header.site {
@@ -38,8 +39,14 @@ header.site h1 {
   margin: 0;
 }
 
+header.site nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 header.site nav a {
-  margin-left: 16px;
   color: var(--text);
   text-decoration: none;
   font-weight: 500;
@@ -72,9 +79,10 @@ h2 { margin-top: 0; }
 
 .card-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px 12px;
 }
 
 .card-title { font-weight: 600; font-size: 1.05rem; }
@@ -96,15 +104,19 @@ h2 { margin-top: 0; }
 .card-meta { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
 
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--accent);
   background: var(--accent);
   color: #fff;
-  padding: 8px 14px;
+  padding: 10px 16px;
+  min-height: 44px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   cursor: pointer;
   text-decoration: none;
+  box-sizing: border-box;
 }
 
 .btn:hover { opacity: 0.9; }
@@ -119,7 +131,7 @@ h2 { margin-top: 0; }
   border-color: var(--overdue);
 }
 
-.btn.small { padding: 4px 10px; font-size: 0.82rem; }
+.btn.small { padding: 8px 12px; min-height: 38px; font-size: 0.85rem; }
 
 .empty-state {
   color: var(--muted);
@@ -165,7 +177,7 @@ h2 { margin-top: 0; }
   padding: 0;
   line-height: 1;
   vertical-align: middle;
-  margin-left: 16px;
+  flex-shrink: 0;
 }
 
 .help-btn:hover { background: var(--accent-light); }
@@ -290,7 +302,38 @@ form.task-form textarea { min-height: 140px; resize: vertical; }
 .form-actions {
   margin-top: 22px;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.complete-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.complete-row input[type="date"] {
+  flex: 1 1 150px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.complete-row input[type="text"] {
+  flex: 2 1 180px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.complete-row button {
+  flex: 1 1 100%;
 }
 
 .instructions-preview {
@@ -308,14 +351,21 @@ form.task-form textarea { min-height: 140px; resize: vertical; }
 
 .attachment-list li, .completion-list li {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  gap: 8px;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border);
   font-size: 0.92rem;
 }
 
-.attachment-list a { color: var(--accent); }
+.attachment-list a {
+  color: var(--accent);
+  word-break: break-word;
+}
+
+.completion-list li > span { word-break: break-word; }
 
 .muted { color: var(--muted); }
 
