@@ -67,7 +67,16 @@ function renderFilterBar() {
       e.stopPropagation();
       const id = Number(btn.dataset.removeTagId);
       const tag = allTags.find((t) => t.id === id);
-      if (!confirm(`Poistetaanko tunniste "${tag.name}"? Se poistuu kaikilta tehtäviltä.`)) return;
+      const usageCount = allTasks.filter((t) => (t.tags || []).some((tg) => tg.id === id)).length;
+
+      const message =
+        usageCount === 0
+          ? `Poistetaanko tunniste "${tag.name}"? Sitä ei ole tällä hetkellä liitetty yhteenkään tehtävään.`
+          : usageCount === 1
+            ? `Poistetaanko tunniste "${tag.name}"? Se on käytössä 1 tehtävässä ja poistuu siltä.`
+            : `Poistetaanko tunniste "${tag.name}"? Se on käytössä ${usageCount} tehtävässä ja poistuu niiltä kaikilta.`;
+
+      if (!confirm(message)) return;
       await api.deleteTag(id);
       if (activeTagFilter === id) activeTagFilter = null;
       await loadTasks();
