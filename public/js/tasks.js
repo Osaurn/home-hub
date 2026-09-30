@@ -37,10 +37,13 @@ function renderTaskList() {
 
 function renderFilterBar() {
   const bar = document.getElementById('tag-filter-bar');
+  const hint = document.getElementById('tag-filter-hint');
   if (allTags.length === 0) {
     bar.innerHTML = '';
+    if (hint) hint.style.display = 'none';
     return;
   }
+  if (hint) hint.style.display = '';
 
   const allChip = `<button type="button" class="tag-chip filter-chip${activeTagFilter === null ? ' active' : ''}" data-tag-id="">Kaikki</button>`;
   const chips = allTags

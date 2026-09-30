@@ -430,28 +430,41 @@ form.task-form textarea { min-height: 140px; resize: vertical; }
 
 .tag-filter-bar { margin-bottom: 16px; }
 
-.filter-chip-wrap { padding: 0; overflow: hidden; }
+.filter-chip-wrap { padding: 7px 8px 7px 14px; gap: 8px; overflow: hidden; }
 
-.filter-chip-wrap .filter-chip-btn,
-.filter-chip-wrap .tag-chip-remove {
+.filter-chip-wrap .filter-chip-btn {
   border: none;
   background: transparent;
   color: inherit;
   font: inherit;
   font-weight: inherit;
   cursor: pointer;
+  padding: 0;
 }
-
-.filter-chip-wrap .filter-chip-btn { padding: 7px 6px 7px 14px; }
 
 .filter-chip-wrap .tag-chip-remove {
-  padding: 7px 12px 7px 6px;
-  color: var(--muted);
-  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--overdue-bg);
+  color: var(--overdue);
+  font-size: 0.9rem;
+  font-weight: 700;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
-.filter-chip-wrap .tag-chip-remove:hover { color: var(--overdue); }
+.filter-chip-wrap .tag-chip-remove:hover,
+.filter-chip-wrap .tag-chip-remove:active {
+  background: var(--overdue);
+  color: #fff;
+}
 
 .tag-add-row {
   display: flex;
