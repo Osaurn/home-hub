@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaikki tehtävät — Kotihubi</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site">
+    <h1>🏡 Kotihubi</h1>
+    <nav>
+      <a href="index.html">Vuosikello</a>
+      <a href="tasks.html" class="active">Kaikki tehtävät</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="form-actions" style="margin-bottom: 16px;">
+      <a class="btn" href="task-form.html">+ Lisää tehtävä</a>
+    </div>
+    <div id="task-list"></div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/help.js"></script>
+  <script src="js/tasks.js"></script>
+</body>
+</html>

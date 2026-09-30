@@ -1,0 +1,85 @@
+const api = {
+  async request(method, url, body) {
+    const opts = { method, headers: {} };
+    if (body !== undefined) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, opts);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Virhe (${res.status})`);
+    }
+    if (res.status === 204) return null;
+    return res.json();
+  },
+
+  getDashboard: () => api.request('GET', '/api/dashboard'),
+  getQuarterTasks: (q) => api.request('GET', `/api/dashboard/quarters/${q}`),
+  getTasks: () => api.request('GET', '/api/tasks'),
+  getTask: (id) => api.request('GET', `/api/tasks/${id}`),
+  createTask: (data) => api.request('POST', '/api/tasks', data),
+  updateTask: (id, data) => api.request('PUT', `/api/tasks/${id}`, data),
+  deleteTask: (id) => api.request('DELETE', `/api/tasks/${id}`),
+
+  completeTask: (id, data) => api.request('POST', `/api/tasks/${id}/complete`, data),
+  deleteCompletion: (id) => api.request('DELETE', `/api/completions/${id}`),
+
+  deleteAttachment: (id) => api.request('DELETE', `/api/attachments/${id}`),
+  async uploadAttachments(taskId, files) {
+    const formData = new FormData();
+    for (const file of files) formData.append('files', file);
+    const res = await fetch(`/api/tasks/${taskId}/attachments`, { method: 'POST', body: formData });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Virhe (${res.status})`);
+    }
+    return res.json();
+  },
+};
+
+const QUARTER_LABELS = {
+  1: '1. vuosineljännes (tammi–maalis)',
+  2: '2. vuosineljännes (huhti–kesä)',
+  3: '3. vuosineljännes (heinä–syys)',
+  4: '4. vuosineljännes (loka–joulu)',
+};
+
+const QUARTER_SHORT = { 1: 'Q1', 2: 'Q2', 3: 'Q3', 4: 'Q4' };
+
+const STATUS_LABELS = {
+  due: 'Ajankohtainen',
+  overdue: 'Myöhässä',
+  done: 'Tehty',
+  upcoming: 'Tulossa',
+};
+
+function formatCheckpoint(checkpoint) {
+  if (checkpoint.type === 'quarterly') {
+    return `${QUARTER_SHORT[checkpoint.quarter]} ${checkpoint.year}`;
+  }
+  if (!checkpoint.lastCompleted) {
+    return 'Ei koskaan tehty';
+  }
+  return `Viimeksi tehty ${checkpoint.lastCompleted}`;
+}
+
+function formatRecurrence(task) {
+  if (task.recurrence_type === 'quarterly') {
+    return (task.quarters || []).map((q) => QUARTER_SHORT[q]).join(', ');
+  }
+  return `Joka ${task.interval_min_years}–${task.interval_max_years} vuosi`;
+}
+
+function todayISO() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}

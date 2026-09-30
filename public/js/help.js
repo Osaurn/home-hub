@@ -1,0 +1,83 @@
+(function () {
+  const GUIDE_HTML = `
+    <h2>Käyttöohje</h2>
+    <p>Kotihubi pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
+
+    <h3>Vuosikello</h3>
+    <p>Etusivun kello näyttää vuoden neljä vuodenaikaa. Väri kertoo tilanteen:</p>
+    <ul>
+      <li><span class="legend-dot" style="background:#3d6b52"></span>Vihreä — kauden tehtävät on tehty</li>
+      <li><span class="legend-dot" style="background:#c99a2e"></span>Keltainen — jotain on tekemättä tällä hetkellä</li>
+      <li><span class="legend-dot" style="background:#b3392c"></span>Punainen — jokin tehtävä on myöhässä</li>
+      <li><span class="legend-dot" style="background:#d9d5c8"></span>Harmaa — vuodenaika ei ole vielä alkanut</li>
+    </ul>
+    <p>Klikkaamalla vuodenaikaa (esim. "Syksy") näet kaikki sille neljännekselle kuuluvat tehtävät ja niiden tilan.</p>
+
+    <h3>Tehtävän merkitseminen tehdyksi</h3>
+    <p>Paina tehtävän kohdalla "Merkitse tehdyksi" -painiketta. Tehtävän tekemispäivä ja mahdollinen muistiinpano tallentuvat historiaan, ja tehtävä katoaa "Tehtävät nyt" / "Myöhässä" -listalta.</p>
+
+    <h3>Uuden tehtävän lisääminen</h3>
+    <p>Paina "+ Lisää tehtävä". Valitse toistuvuus:</p>
+    <ul>
+      <li><strong>Vuosineljänneksittäin</strong> — tehtävä toistuu joka vuosi valitsemillasi vuosineljänneksillä (esim. ilmansuodattimien vaihto keväällä ja syksyllä).</li>
+      <li><strong>Muutaman vuoden välein</strong> — tehtävä toistuu harvemmin, esim. joka 3.–5. vuosi (esim. ulkoseinien maalaus). Sovellus muistuttaa, kun väli alkaa lähestyä ja merkitsee tehtävän myöhässä olevaksi, jos yläraja ylittyy.</li>
+    </ul>
+
+    <h3>Ohjeet ja liitteet</h3>
+    <p>Jokaiselle tehtävälle voi kirjoittaa ohjeet (tukee Markdown-muotoilua) ja liittää tiedostoja, kuten käyttöohjeita tai kuvia. Liitteet löytyvät tehtävän muokkaussivulta.</p>
+
+    <h3>Historia</h3>
+    <p>Tehtävän muokkaussivulla näkyy kaikki aiemmat tekokerrat. Vahingossa tehdyn merkinnän voi kumota "Kumoa"-painikkeella.</p>
+
+    <h3>Käyttäjät</h3>
+    <p>Sovellusta voi käyttää samaan aikaan useampi laite kotiverkossa — kaikki näkevät saman ajantasaisen tilanteen.</p>
+  `;
+
+  function buildHelpUI() {
+    const header = document.querySelector('header.site');
+    const nav = header && header.querySelector('nav');
+    if (!header || !nav) return;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'help-btn';
+    btn.setAttribute('aria-label', 'Ohje');
+    btn.textContent = '?';
+    nav.appendChild(btn);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'help-overlay';
+    overlay.innerHTML = `
+      <div class="help-modal" role="dialog" aria-modal="true" aria-label="Käyttöohje">
+        <button type="button" class="help-close" aria-label="Sulje ohje">×</button>
+        <div class="help-content">${GUIDE_HTML}</div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    function onKeydown(e) {
+      if (e.key === 'Escape') closeHelp();
+    }
+
+    function openHelp() {
+      overlay.classList.add('open');
+      document.addEventListener('keydown', onKeydown);
+    }
+
+    function closeHelp() {
+      overlay.classList.remove('open');
+      document.removeEventListener('keydown', onKeydown);
+    }
+
+    btn.addEventListener('click', openHelp);
+    overlay.querySelector('.help-close').addEventListener('click', closeHelp);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeHelp();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildHelpUI);
+  } else {
+    buildHelpUI();
+  }
+})();

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tehtävä — Kotihubi</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site">
+    <h1>🏡 Kotihubi</h1>
+    <nav>
+      <a href="index.html">Vuosikello</a>
+      <a href="tasks.html" class="active">Kaikki tehtävät</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="page-title">Uusi tehtävä</h2>
+
+    <form class="task-form" id="task-form">
+      <label for="title">Otsikko</label>
+      <input type="text" id="title" name="title" required />
+
+      <label for="instructions">Ohjeet</label>
+      <textarea id="instructions" name="instructions" placeholder="Kirjoita ohjeet (tukee Markdown-muotoilua)"></textarea>
+      <div class="instructions-preview" id="instructions-preview"></div>
+
+      <label>Toistuvuus</label>
+      <div class="recurrence-toggle">
+        <button type="button" id="toggle-quarterly" class="active">Vuosineljänneksittäin</button>
+        <button type="button" id="toggle-interval">Muutaman vuoden välein</button>
+      </div>
+
+      <div id="quarterly-fields">
+        <div class="quarters-check">
+          <label><input type="checkbox" name="quarter" value="1" /> Q1 (tammi–maalis)</label>
+          <label><input type="checkbox" name="quarter" value="2" /> Q2 (huhti–kesä)</label>
+          <label><input type="checkbox" name="quarter" value="3" /> Q3 (heinä–syys)</label>
+          <label><input type="checkbox" name="quarter" value="4" /> Q4 (loka–joulu)</label>
+        </div>
+      </div>
+
+      <div id="interval-fields" style="display:none;">
+        <div class="interval-fields">
+          <div>
+            <label for="interval_min_years">Väli alkaen (vuotta)</label>
+            <input type="number" id="interval_min_years" min="1" />
+          </div>
+          <div>
+            <label for="interval_max_years">Väli viimeistään (vuotta)</label>
+            <input type="number" id="interval_max_years" min="1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Tallenna</button>
+        <a class="btn secondary" href="tasks.html">Peruuta</a>
+        <button type="button" class="btn danger" id="delete-btn" style="display:none;">Poista tehtävä</button>
+      </div>
+    </form>
+
+    <div id="detail-sections" style="display:none;">
+      <section>
+        <h2 class="section-title">Merkitse tehdyksi</h2>
+        <div class="card">
+          <div class="form-actions" style="margin-top:0;">
+            <input type="date" id="complete-date" />
+            <input type="text" id="complete-note" placeholder="Muistiinpano (valinnainen)" style="flex:1;" />
+            <button type="button" class="btn" id="complete-btn">Merkitse tehdyksi</button>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Liitteet</h2>
+        <div class="card">
+          <input type="file" id="attachment-input" multiple />
+          <ul class="attachment-list" id="attachment-list"></ul>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Historia</h2>
+        <ul class="completion-list" id="completion-list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <script src="vendor/marked.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/help.js"></script>
+  <script src="js/taskForm.js"></script>
+</body>
+</html>
