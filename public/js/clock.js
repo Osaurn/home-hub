@@ -6,7 +6,7 @@ const QUARTER_COLORS = {
 };
 const INK = '#111111';
 const QUARTER_TEXT = { done: '#fff', due: INK, overdue: '#fff', upcoming: INK };
-const CLOCK_FONT = "'Lilita One', 'Trebuchet MS', sans-serif";
+const CLOCK_FONT = "'Nunito', 'Trebuchet MS', sans-serif";
 
 const QUARTER_NAMES = { 1: 'Talvi', 2: 'Kevät', 3: 'Kesä', 4: 'Syksy' };
 
@@ -55,7 +55,7 @@ function renderYearlyClock(container, { today, currentQuarter, quarterStatus, se
                 stroke="${INK}" stroke-width="${isSelected ? 5 : 3}" stroke-linejoin="round"
                 opacity="${isCurrent ? 1 : 0.85}" />
           <text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="middle"
-                font-family="${CLOCK_FONT}" font-size="${isCurrent ? 14 : 12}" letter-spacing="0.5" fill="${QUARTER_TEXT[status]}">
+                font-family="${CLOCK_FONT}" font-size="${isCurrent ? 14 : 12}" font-weight="900" fill="${QUARTER_TEXT[status]}">
             ${QUARTER_NAMES[q]}
           </text>
         </g>`;
@@ -68,8 +68,8 @@ function renderYearlyClock(container, { today, currentQuarter, quarterStatus, se
     <svg viewBox="0 0 200 200" role="img" aria-label="Vuosikello">
       ${slices}
       <circle cx="${cx}" cy="${cy}" r="34" fill="#fbf6e9" stroke="${INK}" stroke-width="3" />
-      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="12" fill="#555049">Tänään</text>
-      <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="13" fill="${INK}">${today.toLocaleDateString('fi-FI')}</text>
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="11" font-weight="800" fill="#555049">Tänään</text>
+      <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="12.5" font-weight="900" fill="${INK}">${today.toLocaleDateString('fi-FI')}</text>
       <circle cx="${marker.x}" cy="${marker.y}" r="7" fill="#d7263d" stroke="${INK}" stroke-width="3" />
     </svg>`;
 
