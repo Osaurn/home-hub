@@ -12,10 +12,10 @@
     <h3>Vuosikello</h3>
     <p>Etusivun kello näyttää vuoden neljä vuodenaikaa. Väri kertoo tilanteen:</p>
     <ul>
-      <li><span class="legend-dot" style="background:#3d6b52"></span>Vihreä — kauden tehtävät on tehty</li>
-      <li><span class="legend-dot" style="background:#c99a2e"></span>Keltainen — jotain on tekemättä tällä hetkellä</li>
-      <li><span class="legend-dot" style="background:#b3392c"></span>Punainen — jokin tehtävä on myöhässä</li>
-      <li><span class="legend-dot" style="background:#d9d5c8"></span>Harmaa — vuodenaika ei ole vielä alkanut</li>
+      <li><span class="legend-dot" style="background:#1f8a82"></span>Turkoosi — kauden tehtävät on tehty</li>
+      <li><span class="legend-dot" style="background:#f2b705"></span>Keltainen — jotain on tekemättä tällä hetkellä</li>
+      <li><span class="legend-dot" style="background:#d7263d"></span>Punainen — jokin tehtävä on myöhässä</li>
+      <li><span class="legend-dot" style="background:#ffffff"></span>Valkoinen — vuodenaika ei ole vielä alkanut</li>
     </ul>
     <p>Klikkaamalla vuodenaikaa (esim. "Syksy") näet kaikki sille neljännekselle kuuluvat tehtävät ja niiden tilan. Jos tehtävillä on tunnisteita, voit vielä suodattaa listaa niiden mukaan.</p>
 
