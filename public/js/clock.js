@@ -1,12 +1,12 @@
 const QUARTER_COLORS = {
-  done: '#1f8a82',
-  due: '#f2b705',
+  done: '#1f7a5c',
+  due: '#e0a526',
   overdue: '#d7263d',
-  upcoming: '#ffffff',
+  upcoming: '#e8e8e8',
 };
 const INK = '#111111';
-const QUARTER_TEXT = { done: '#fff', due: INK, overdue: '#fff', upcoming: INK };
-const CLOCK_FONT = "'Nunito', 'Trebuchet MS', sans-serif";
+const QUARTER_TEXT = { done: '#fff', due: INK, overdue: '#fff', upcoming: '#555' };
+const CLOCK_FONT = "'Nunito', system-ui, sans-serif";
 
 const QUARTER_NAMES = { 1: 'Talvi', 2: 'Kevät', 3: 'Kesä', 4: 'Syksy' };
 
@@ -52,10 +52,10 @@ function renderYearlyClock(container, { today, currentQuarter, quarterStatus, se
            aria-label="${QUARTER_NAMES[q]} — näytä tehtävät">
           <path d="${pieSlicePath(cx, cy, r, startAngle, endAngle)}"
                 fill="${QUARTER_COLORS[status]}"
-                stroke="${INK}" stroke-width="${isSelected ? 5 : 3}" stroke-linejoin="round"
+                stroke="${isSelected ? INK : '#fff'}" stroke-width="${isSelected ? 3 : 2}" stroke-linejoin="round"
                 opacity="${isCurrent ? 1 : 0.85}" />
           <text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="middle"
-                font-family="${CLOCK_FONT}" font-size="${isCurrent ? 14 : 12}" font-weight="900" fill="${QUARTER_TEXT[status]}">
+                font-family="${CLOCK_FONT}" font-size="${isCurrent ? 13 : 12}" font-weight="${isCurrent ? 800 : 700}" fill="${QUARTER_TEXT[status]}">
             ${QUARTER_NAMES[q]}
           </text>
         </g>`;
@@ -67,10 +67,10 @@ function renderYearlyClock(container, { today, currentQuarter, quarterStatus, se
   container.innerHTML = `
     <svg viewBox="0 0 200 200" role="img" aria-label="Vuosikello">
       ${slices}
-      <circle cx="${cx}" cy="${cy}" r="34" fill="#fbf6e9" stroke="${INK}" stroke-width="3" />
-      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="11" font-weight="800" fill="#555049">Tänään</text>
-      <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="12.5" font-weight="900" fill="${INK}">${today.toLocaleDateString('fi-FI')}</text>
-      <circle cx="${marker.x}" cy="${marker.y}" r="7" fill="#d7263d" stroke="${INK}" stroke-width="3" />
+      <circle cx="${cx}" cy="${cy}" r="34" fill="#fff" stroke="#e3e3e3" stroke-width="1.5" />
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="11" font-weight="600" fill="#6b6b6b">Tänään</text>
+      <text x="${cx}" y="${cy + 12}" text-anchor="middle" font-family="${CLOCK_FONT}" font-size="12.5" font-weight="800" fill="${INK}">${today.toLocaleDateString('fi-FI')}</text>
+      <circle cx="${marker.x}" cy="${marker.y}" r="6" fill="${INK}" stroke="#fff" stroke-width="2" />
     </svg>`;
 
   if (onQuarterClick) {
