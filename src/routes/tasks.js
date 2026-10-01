@@ -36,6 +36,7 @@ function validateTaskBody(body) {
       months: null,
       interval_min_years: null,
       interval_max_years: null,
+      interval_first_due: null,
     };
   }
 
@@ -55,6 +56,7 @@ function validateTaskBody(body) {
       months: JSON.stringify([...new Set(months)].sort((a, b) => a - b)),
       interval_min_years: null,
       interval_max_years: null,
+      interval_first_due: null,
     };
   }
 
@@ -62,6 +64,12 @@ function validateTaskBody(body) {
   const max = Number(body.interval_max_years);
   if (!Number.isInteger(min) || !Number.isInteger(max) || min < 1 || max < min) {
     const err = new Error('Virheellinen väli vuosina');
+    err.status = 400;
+    throw err;
+  }
+  const firstDue = body.interval_first_due || null;
+  if (firstDue !== null && !/^\d{4}-\d{2}-\d{2}$/.test(firstDue)) {
+    const err = new Error('Virheellinen ensimmäinen eräpäivä');
     err.status = 400;
     throw err;
   }
@@ -73,6 +81,7 @@ function validateTaskBody(body) {
     months: null,
     interval_min_years: min,
     interval_max_years: max,
+    interval_first_due: firstDue,
   };
 }
 
@@ -109,8 +118,8 @@ router.post('/', (req, res) => {
   const data = validateTaskBody(req.body);
   const result = db
     .prepare(
-      `INSERT INTO tasks (title, instructions, recurrence_type, quarters, months, interval_min_years, interval_max_years)
-       VALUES (@title, @instructions, @recurrence_type, @quarters, @months, @interval_min_years, @interval_max_years)`
+      `INSERT INTO tasks (title, instructions, recurrence_type, quarters, months, interval_min_years, interval_max_years, interval_first_due)
+       VALUES (@title, @instructions, @recurrence_type, @quarters, @months, @interval_min_years, @interval_max_years, @interval_first_due)`
     )
     .run(data);
   const tagIds = (Array.isArray(req.body.tag_ids) ? req.body.tag_ids : []).map(Number);
@@ -127,7 +136,8 @@ router.put('/:id', (req, res) => {
   const data = validateTaskBody(req.body);
   db.prepare(
     `UPDATE tasks SET title = @title, instructions = @instructions, recurrence_type = @recurrence_type,
-       quarters = @quarters, months = @months, interval_min_years = @interval_min_years, interval_max_years = @interval_max_years
+       quarters = @quarters, months = @months, interval_min_years = @interval_min_years, interval_max_years = @interval_max_years,
+       interval_first_due = @interval_first_due
      WHERE id = @id`
   ).run({ ...data, id: req.params.id });
 

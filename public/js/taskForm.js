@@ -73,6 +73,7 @@ function fillForm(task) {
   } else {
     document.getElementById('interval_min_years').value = task.interval_min_years;
     document.getElementById('interval_max_years').value = task.interval_max_years;
+    document.getElementById('interval_first_due').value = task.interval_first_due || '';
   }
 }
 
@@ -238,6 +239,7 @@ form.addEventListener('submit', async (e) => {
   } else {
     data.interval_min_years = Number(document.getElementById('interval_min_years').value);
     data.interval_max_years = Number(document.getElementById('interval_max_years').value);
+    data.interval_first_due = document.getElementById('interval_first_due').value || null;
   }
 
   try {

@@ -77,12 +77,29 @@ function computeMonthlyCheckpoints(task, completions, now) {
 
 function computeIntervalStatus(task, completions, now) {
   if (completions.length === 0) {
+    // Without a first-due date the task is due immediately. With one, the
+    // window opens on that date and stays open for max - min years.
+    if (!task.interval_first_due) {
+      return {
+        type: 'interval',
+        status: 'due',
+        lastCompleted: null,
+        dueFrom: null,
+        overdueFrom: null,
+      };
+    }
+    const dueFrom = parseISODate(task.interval_first_due);
+    const overdueFrom = addYears(dueFrom, task.interval_max_years - task.interval_min_years);
+    let status;
+    if (now < dueFrom) status = 'upcoming';
+    else if (now < overdueFrom) status = 'due';
+    else status = 'overdue';
     return {
       type: 'interval',
-      status: 'due',
+      status,
       lastCompleted: null,
-      dueFrom: null,
-      overdueFrom: null,
+      dueFrom: toISODate(dueFrom),
+      overdueFrom: toISODate(overdueFrom),
     };
   }
 

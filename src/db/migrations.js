@@ -54,8 +54,19 @@ function migrateMonthlyRecurrence(db) {
   db.pragma('foreign_keys = ON');
 }
 
+// Adds `interval_first_due`: an optional ISO date before which a
+// never-completed interval task is "upcoming" instead of immediately due.
+function migrateIntervalFirstDue(db) {
+  const hasColumn = db
+    .prepare(`PRAGMA table_info(tasks)`)
+    .all()
+    .some((c) => c.name === 'interval_first_due');
+  if (!hasColumn) db.exec(`ALTER TABLE tasks ADD COLUMN interval_first_due TEXT`);
+}
+
 function runMigrations(db) {
   migrateMonthlyRecurrence(db);
+  migrateIntervalFirstDue(db);
 }
 
 module.exports = { runMigrations };

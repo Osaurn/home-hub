@@ -114,3 +114,24 @@ test('interval task never completed is immediately due', () => {
   assert.equal(cp.status, 'due');
   assert.equal(cp.lastCompleted, null);
 });
+
+test('never-completed interval task with a future first-due date is upcoming', () => {
+  const task = { recurrence_type: 'interval', interval_min_years: 3, interval_max_years: 5, interval_first_due: '2029-10-01' };
+  const [cp] = computeTaskCheckpoints(task, [], NOW);
+  assert.equal(cp.status, 'upcoming');
+  assert.equal(cp.dueFrom, '2029-10-01');
+  assert.equal(cp.overdueFrom, '2031-10-01');
+});
+
+test('never-completed interval task is due once its first-due date has passed', () => {
+  const task = { recurrence_type: 'interval', interval_min_years: 3, interval_max_years: 5, interval_first_due: '2026-09-01' };
+  const [cp] = computeTaskCheckpoints(task, [], NOW);
+  assert.equal(cp.status, 'due');
+});
+
+test('first-due date is ignored once the task has a completion', () => {
+  const task = { recurrence_type: 'interval', interval_min_years: 3, interval_max_years: 5, interval_first_due: '2029-10-01' };
+  const [cp] = computeTaskCheckpoints(task, [{ completed_at: '2022-01-01' }], NOW);
+  assert.equal(cp.status, 'due');
+  assert.equal(cp.dueFrom, '2025-01-01');
+});

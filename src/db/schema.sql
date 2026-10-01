@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   months              TEXT,
   interval_min_years  INTEGER,
   interval_max_years  INTEGER,
+  interval_first_due  TEXT,
   created_at          TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

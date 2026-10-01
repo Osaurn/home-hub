@@ -83,6 +83,7 @@ function formatCheckpoint(checkpoint) {
     return `${MONTH_NAMES[checkpoint.month]} ${checkpoint.year}`;
   }
   if (!checkpoint.lastCompleted) {
+    if (checkpoint.dueFrom) return `Ei vielä tehty, ajankohtainen ${checkpoint.dueFrom}`;
     return 'Ei koskaan tehty';
   }
   return `Viimeksi tehty ${checkpoint.lastCompleted}`;
