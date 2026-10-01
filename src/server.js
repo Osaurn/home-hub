@@ -27,5 +27,5 @@ app.use('/api/history', historyRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Home Hub käynnissä portissa ${PORT}`);
+  console.log(`Kalle Kotiapuri käynnissä portissa ${PORT}`);
 });

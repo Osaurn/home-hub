@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-echo "== Kotihubi-päivitys: $(date '+%Y-%m-%d %H:%M:%S') =="
+echo "== Kalle Kotiapuri-päivitys: $(date '+%Y-%m-%d %H:%M:%S') =="
 
 if [ -n "$(git status --porcelain)" ]; then
   echo "Hakemistossa on tallentamattomia muutoksia — keskeytetään." >&2

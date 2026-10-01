@@ -1,7 +1,7 @@
 services:
-  home-hub:
+  kalle-kotiapuri:
     build: .
-    container_name: home-hub
+    container_name: kalle-kotiapuri
     ports:
       - "3000:3000"
     volumes:

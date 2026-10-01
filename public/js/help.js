@@ -1,10 +1,10 @@
 (function () {
   const GUIDE_HTML = `
     <h2>Käyttöohje</h2>
-    <p>Kotihubi pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
+    <p>Kalle Kotiapuri pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
 
     <h3>Siirtyminen sovelluksessa</h3>
-    <p>"🏡 Kotihubi" -logo vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
+    <p>"🏡 Kalle Kotiapuri" -logo vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
 
     <h3>Vuosikello</h3>
     <p>Etusivun kello näyttää vuoden neljä vuodenaikaa. Väri kertoo tilanteen:</p>
