@@ -641,3 +641,20 @@ textarea:focus-visible, [tabindex]:focus-visible {
 }
 .equipment-facts dt { color: var(--muted); }
 .equipment-facts dd { margin: 0; word-break: break-word; }
+
+.manual-viewer { margin-top: 10px; }
+.manual-frame {
+  display: block;
+  width: 100%;
+  height: 75vh;
+  min-height: 420px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.manual-image { display: block; max-width: 100%; margin: 0 auto; border-radius: var(--radius); }
+.manual-links { display: flex; gap: 16px; margin-top: 8px; font-size: 0.9rem; }
+.manual-links a { color: var(--ink); }
+@media (max-width: 600px) {
+  .manual-frame { height: 60vh; min-height: 320px; }
+}

@@ -11,6 +11,8 @@ const router = express.Router();
 
 const FIELDS = ['category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions', 'notes'];
 
+const INLINE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp']);
+
 function badRequest(message) {
   const err = new Error(message);
   err.status = 400;
@@ -171,9 +173,10 @@ router.get('/manuals/:id', (req, res) => {
   const onError = (err) => {
     if (err && !res.headersSent) res.status(404).json({ error: 'Tiedostoa ei löytynyt' });
   };
-  // PDFs open in the browser so a manual is one tap away; everything else downloads.
-  if (manual.mime_type === 'application/pdf') {
-    res.type('application/pdf');
+  // PDFs and common images are served inline so they can be previewed in
+  // the app; everything else (never HTML/SVG) downloads.
+  if (INLINE_TYPES.has(manual.mime_type)) {
+    res.type(manual.mime_type);
     res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(manual.filename)}`);
     res.sendFile(filePath, onError);
   } else {

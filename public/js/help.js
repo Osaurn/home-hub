@@ -39,7 +39,7 @@
     <p>Jokaiselle tehtävälle voi kirjoittaa ohjeet (tukee Markdown-muotoilua) ja liittää tiedostoja, kuten käyttöohjeita tai kuvia. Sekä ohjeet että liitteet löytyvät ja niitä voi muokata milloin tahansa tehtävän muokkaussivulta.</p>
 
     <h3>Laitteet</h3>
-    <p>"Laitteet"-sivulle voi tallentaa kodin laitteet (esim. lämmitysjärjestelmä, ilmanvaihtokone) ja liittää niihin käyttöohjeet: lataa laitteen mukana tullut tai netistä löytämäsi PDF-ohje, ja kirjoita halutessasi omat pikaohjeet (tukee Markdown-muotoilua). Laitteen sivulta ohjeet ovat yhden painalluksen päässä.</p>
+    <p>"Laitteet"-sivulle voi tallentaa kodin laitteet (esim. lämmitysjärjestelmä, ilmanvaihtokone) ja liittää niihin käyttöohjeet: lataa laitteen mukana tullut tai netistä löytämäsi PDF-ohje, ja kirjoita halutessasi omat pikaohjeet (tukee Markdown-muotoilua). Laitteen sivulla PDF- ja kuvamuotoiset käyttöohjeet avautuvat suoraan esikatseluikkunaan, jota voi selata poistumatta sovelluksesta (esikatselun voi piilottaa, ja ohjeen voi avata myös omaan ikkunaansa).</p>
     <p>Tehtävän muokkauksessa voi valita "Laite", jolloin tehtävä näkyy laitteen sivulla ja sen tekokerrat kertyvät laitteen huoltohistoriaksi. Laitteelle voi tallentaa takuun päättymispäivän ja takuun ehdot. Laitteen kortti ja sivu näyttävät, onko takuu voimassa, päättymässä (alle 90 päivää) vai päättynyt — näin muistat vaatia ilmaisen korjauksen, kun takuu vielä on voimassa. Laitteen poistaminen ei poista siihen liitettyjä tehtäviä.</p>
 
     <h3>Historia</h3>
