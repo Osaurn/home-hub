@@ -93,12 +93,31 @@ function migrateEquipmentIcon(db) {
   if (!hasColumn) db.exec(`ALTER TABLE equipment ADD COLUMN icon TEXT`);
 }
 
+// Equipment used to have separate "instructions" and "notes" fields; they
+// are now one (instructions). Appends any existing notes to the instructions
+// under a heading and clears them. Idempotent: cleared notes are skipped.
+// The notes column itself is left in place but no longer used.
+function migrateMergeEquipmentNotes(db) {
+  const rows = db.prepare(`SELECT id, instructions, notes FROM equipment WHERE notes IS NOT NULL AND TRIM(notes) != ''`).all();
+  const update = db.prepare(`UPDATE equipment SET instructions = ?, notes = NULL WHERE id = ?`);
+  const clear = db.prepare(`UPDATE equipment SET notes = NULL WHERE notes IS NOT NULL AND TRIM(notes) = ''`);
+  db.transaction(() => {
+    for (const r of rows) {
+      const existing = (r.instructions || '').trim();
+      const merged = existing ? `${existing}\n\n## Muistiinpanot\n\n${r.notes.trim()}` : r.notes.trim();
+      update.run(merged, r.id);
+    }
+    clear.run();
+  })();
+}
+
 function runMigrations(db) {
   migrateMonthlyRecurrence(db);
   migrateIntervalFirstDue(db);
   migrateTaskEquipment(db);
   migrateEquipmentWarranty(db);
   migrateEquipmentIcon(db);
+  migrateMergeEquipmentNotes(db);
 }
 
 module.exports = { runMigrations };

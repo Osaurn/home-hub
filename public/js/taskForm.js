@@ -229,7 +229,7 @@ async function loadEquipmentGuide() {
   }
   if (request !== guideRequest) return; // selection changed while loading
 
-  const hasContent = e.manuals.length > 0 || e.instructions || e.notes;
+  const hasContent = e.manuals.length > 0 || e.instructions;
   panel.innerHTML = `
     <div class="field-header">
       <strong>Laitteen ohjeet: ${escapeHtml(e.name)}</strong>
@@ -237,8 +237,7 @@ async function loadEquipmentGuide() {
     </div>
     ${hasContent ? '' : `<p class="muted">Laitteelle ei ole vielä ohjeita. <a href="equipment-form.html?id=${e.id}">Lisää ohjeita</a></p>`}
     <div id="equipment-manuals"></div>
-    ${e.instructions ? `<h3 class="guide-heading">Pikaohjeet</h3><div class="instructions-preview">${marked.parse(e.instructions)}</div>` : ''}
-    ${e.notes ? `<h3 class="guide-heading">Muistiinpanot</h3><div style="white-space:pre-wrap;">${escapeHtml(e.notes)}</div>` : ''}`;
+    ${e.instructions ? `<h3 class="guide-heading">Ohjeet ja muistiinpanot</h3><div class="instructions-preview">${marked.parse(e.instructions)}</div>` : ''}`;
   if (e.manuals.length > 0) renderManualViewer(document.getElementById('equipment-manuals'), e.manuals, { collapsedByDefault: true });
   panel.style.display = '';
 }

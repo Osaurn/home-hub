@@ -48,13 +48,14 @@ function equipmentTileHtml(e) {
   const manuals = e.manual_count === 1 ? '1 käyttöohje' : `${e.manual_count} käyttöohjetta`;
   const contents = [
     e.manual_count > 0 ? manuals : null,
-    e.instructions ? 'Pikaohjeet' : null,
-    e.notes ? 'Muistiinpanot' : null,
+    e.instructions ? 'Ohjeet ja muistiinpanot' : null,
   ].filter(Boolean);
   const pills = contents.length
     ? `<div class="tag-pills">${contents.map((c) => `<span class="tag-pill">${c}</span>`).join('')}</div>`
     : '<div class="card-meta">Ei vielä ohjeita</div>';
-  const snippet = e.notes ? `<div class="equipment-snippet">${escapeHtml(e.notes.replace(/\s+/g, ' '))}</div>` : '';
+  // Plain-text glance at the instructions: drop Markdown markers.
+  const plain = (e.instructions || '').replace(/(^|\s)\d+\.(?=\s)|[#*_`>\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const snippet = plain ? `<div class="equipment-snippet">${escapeHtml(plain)}</div>` : '';
   const tasks = e.task_count === 1 ? '1 tehtävä' : `${e.task_count} tehtävää`;
   return `
     <a class="equipment-tile card${status}" href="equipment-detail.html?id=${e.id}">

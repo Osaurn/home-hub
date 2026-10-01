@@ -6,7 +6,7 @@ const instructionsInput = document.getElementById('instructions');
 const previewEl = document.getElementById('instructions-preview');
 const instructionsToggle = document.getElementById('instructions-toggle');
 const deleteBtn = document.getElementById('delete-btn');
-const TEXT_FIELDS = ['name', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'notes'];
+const TEXT_FIELDS = ['name', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes'];
 
 let pendingFiles = [];
 let selectedIcon = null; // null = automatic

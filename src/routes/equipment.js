@@ -9,7 +9,7 @@ const { warrantyStatus } = require('../lib/warranty');
 
 const router = express.Router();
 
-const FIELDS = ['icon', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions', 'notes'];
+const FIELDS = ['icon', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions'];
 
 const INLINE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 
@@ -98,8 +98,8 @@ router.post('/equipment', (req, res) => {
   const data = validateEquipmentBody(req.body);
   const result = db
     .prepare(
-      `INSERT INTO equipment (name, icon, category, location, model, serial_number, purchase_date, warranty_expires, warranty_notes, instructions, notes)
-       VALUES (@name, @icon, @category, @location, @model, @serial_number, @purchase_date, @warranty_expires, @warranty_notes, @instructions, @notes)`
+      `INSERT INTO equipment (name, icon, category, location, model, serial_number, purchase_date, warranty_expires, warranty_notes, instructions)
+       VALUES (@name, @icon, @category, @location, @model, @serial_number, @purchase_date, @warranty_expires, @warranty_notes, @instructions)`
     )
     .run(data);
   res.status(201).json(db.prepare('SELECT * FROM equipment WHERE id = ?').get(result.lastInsertRowid));
@@ -133,7 +133,7 @@ router.put('/equipment/:id', (req, res) => {
   db.prepare(
     `UPDATE equipment SET name = @name, icon = @icon, category = @category, location = @location, model = @model,
        serial_number = @serial_number, purchase_date = @purchase_date,
-       warranty_expires = @warranty_expires, warranty_notes = @warranty_notes, instructions = @instructions, notes = @notes
+       warranty_expires = @warranty_expires, warranty_notes = @warranty_notes, instructions = @instructions
      WHERE id = @id`
   ).run({ ...data, id: existing.id });
   res.json(db.prepare('SELECT * FROM equipment WHERE id = ?').get(existing.id));

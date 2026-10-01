@@ -54,8 +54,8 @@ function render(e) {
     <h2 class="section-title">Käyttöohjeet</h2>
     <div class="card" id="manuals"></div>
 
-    <h2 class="section-title">Pikaohjeet</h2>
-    <div class="card instructions-preview">${e.instructions ? marked.parse(e.instructions) : '<p class="muted">Ei pikaohjeita. Lisää ne muokkaussivulta.</p>'}</div>
+    <h2 class="section-title">Ohjeet ja muistiinpanot</h2>
+    <div class="card instructions-preview">${e.instructions ? marked.parse(e.instructions) : '<p class="muted">Ei vielä ohjeita tai muistiinpanoja. Lisää ne muokkaussivulta.</p>'}</div>
 
     <h2 class="section-title">Tehtävät</h2>
     <div class="card">
@@ -66,7 +66,6 @@ function render(e) {
     <h2 class="section-title">Huoltohistoria</h2>
     <div class="card"><ul class="completion-list" style="margin:0;">${history}</ul></div>
 
-    ${e.notes ? `<h2 class="section-title">Muistiinpanot</h2><div class="card" style="white-space:pre-wrap;">${escapeHtml(e.notes)}</div>` : ''}
   `;
   renderManualViewer(document.getElementById('manuals'), e.manuals);
 }
