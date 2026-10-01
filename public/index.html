@@ -21,10 +21,6 @@
   </header>
 
   <main>
-    <div class="form-actions" style="justify-content: flex-end;">
-      <a class="btn" href="task-form.html">+ Lisää tehtävä</a>
-    </div>
-
     <div class="hero">
       <section id="kalle" class="kalle" aria-live="polite" hidden></section>
       <div class="clock-wrap"><div id="clock"></div></div>
@@ -40,7 +36,10 @@
     </section>
 
     <section>
-      <h2 class="section-title">Tehtävät nyt</h2>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:28px 0 10px;">
+        <h2 class="section-title" style="margin:0;">Tehtävät nyt</h2>
+        <a class="btn small" href="task-form.html">+ Lisää tehtävä</a>
+      </div>
       <div id="due-list"></div>
     </section>
 
