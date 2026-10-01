@@ -4,7 +4,7 @@
     <p>Kalle Kotiapuri pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
 
     <h3>Siirtyminen sovelluksessa</h3>
-    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
+    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista), "Laitteet" (laitteet ja niiden ohjeet) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
 
     <h3>Kalle ja hänen tunnelmansa</h3>
     <p>Etusivun ylälaidassa Kalle seuraa tilannetta ja kommentoi sitä puhekuplassa. Kun kaikki on tehty, Kalle on innoissaan. Kun tehtäviä on myöhässä, hän huolestuu, uupuu ja lopulta surullisena kaipaa apuasi.</p>
@@ -37,6 +37,10 @@
 
     <h3>Ohjeet ja liitteet</h3>
     <p>Jokaiselle tehtävälle voi kirjoittaa ohjeet (tukee Markdown-muotoilua) ja liittää tiedostoja, kuten käyttöohjeita tai kuvia. Sekä ohjeet että liitteet löytyvät ja niitä voi muokata milloin tahansa tehtävän muokkaussivulta.</p>
+
+    <h3>Laitteet</h3>
+    <p>"Laitteet"-sivulle voi tallentaa kodin laitteet (esim. lämmitysjärjestelmä, ilmanvaihtokone) ja liittää niihin käyttöohjeet: lataa laitteen mukana tullut tai netistä löytämäsi PDF-ohje, ja kirjoita halutessasi omat pikaohjeet (tukee Markdown-muotoilua). Laitteen sivulta ohjeet ovat yhden painalluksen päässä.</p>
+    <p>Tehtävän muokkauksessa voi valita "Laite", jolloin tehtävä näkyy laitteen sivulla ja sen tekokerrat kertyvät laitteen huoltohistoriaksi. Laitteen poistaminen ei poista siihen liitettyjä tehtäviä.</p>
 
     <h3>Historia</h3>
     <p>Etusivun "Viimeksi tehdyt" -osio näyttää viisi tuoreinta tekokertaa, ja "Historia"-sivu koko listan aikajärjestyksessä. Yksittäisen tehtävän omalla muokkaussivulla näkyy vain sen tehtävän tekokerrat, ja vahingossa tehdyn merkinnän voi kumota "Kumoa"-painikkeella.</p>

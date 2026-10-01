@@ -8,7 +8,7 @@ function taskListCardHtml(task) {
       <div class="task-row">
         <div>
           <div class="card-title"><a href="task-form.html?id=${task.id}">${escapeHtml(task.title)}</a></div>
-          <div class="task-row-meta">${escapeHtml(formatRecurrence(task))}</div>
+          <div class="task-row-meta">${escapeHtml(formatRecurrence(task))}${task.equipment_name ? ' · ' + escapeHtml(task.equipment_name) : ''}</div>
           ${tagChipsHtml(task.tags)}
         </div>
         <a class="btn secondary small" href="task-form.html?id=${task.id}">Muokkaa</a>

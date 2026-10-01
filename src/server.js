@@ -6,6 +6,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const taskRoutes = require('./routes/tasks');
 const completionRoutes = require('./routes/completions');
 const attachmentRoutes = require('./routes/attachments');
+const equipmentRoutes = require('./routes/equipment');
 const tagRoutes = require('./routes/tags');
 const historyRoutes = require('./routes/history');
 const errorHandler = require('./middleware/errorHandler');
@@ -21,6 +22,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api', completionRoutes);
 app.use('/api', attachmentRoutes);
+app.use('/api', equipmentRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/history', historyRoutes);
 

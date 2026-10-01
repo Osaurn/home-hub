@@ -31,6 +31,32 @@ CREATE TABLE IF NOT EXISTS attachments (
 );
 CREATE INDEX IF NOT EXISTS idx_attachments_task ON attachments(task_id);
 
+-- tasks.equipment_id is added by a migration (see migrations.js) so that
+-- the same code path upgrades both fresh and existing databases.
+CREATE TABLE IF NOT EXISTS equipment (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  name           TEXT NOT NULL,
+  category       TEXT,
+  location       TEXT,
+  model          TEXT,
+  serial_number  TEXT,
+  purchase_date  TEXT,
+  instructions   TEXT,
+  notes          TEXT,
+  created_at     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS equipment_manuals (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  equipment_id  INTEGER NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+  filename      TEXT NOT NULL,
+  stored_path   TEXT NOT NULL,
+  mime_type     TEXT,
+  size_bytes    INTEGER,
+  uploaded_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_equipment_manuals_equipment ON equipment_manuals(equipment_id);
+
 CREATE TABLE IF NOT EXISTS tags (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   name        TEXT NOT NULL UNIQUE,

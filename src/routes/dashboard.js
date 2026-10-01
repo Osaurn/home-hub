@@ -18,7 +18,9 @@ function loadCompletionsByTask() {
 
 router.get('/', (req, res) => {
   const now = new Date();
-  const tasks = db.prepare('SELECT * FROM tasks').all();
+  const tasks = db
+    .prepare('SELECT t.*, e.name AS equipment_name FROM tasks t LEFT JOIN equipment e ON e.id = t.equipment_id')
+    .all();
   const completionsByTask = loadCompletionsByTask();
 
   const dueTasks = [];
@@ -28,7 +30,7 @@ router.get('/', (req, res) => {
     const completions = completionsByTask.get(task.id) || [];
     const checkpoints = computeTaskCheckpoints(task, completions, now);
     for (const checkpoint of checkpoints) {
-      const entry = { taskId: task.id, title: task.title, checkpoint, tags: getTagsForTask(db, task.id) };
+      const entry = { taskId: task.id, title: task.title, equipmentId: task.equipment_id, equipmentName: task.equipment_name, checkpoint, tags: getTagsForTask(db, task.id) };
       if (checkpoint.status === 'due') dueTasks.push(entry);
       else if (checkpoint.status === 'overdue') overdueTasks.push(entry);
     }

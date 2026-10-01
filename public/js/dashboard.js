@@ -51,7 +51,7 @@ function taskCardHtml(entry) {
       <div class="card-header">
         <div>
           <div class="card-title"><a href="task-form.html?id=${entry.taskId}">${escapeHtml(entry.title)}</a></div>
-          <div class="card-meta">${escapeHtml(formatCheckpoint(entry.checkpoint))}</div>
+          <div class="card-meta">${escapeHtml(formatCheckpoint(entry.checkpoint))}${entry.equipmentName ? ' · ' + escapeHtml(entry.equipmentName) : ''}</div>
           ${tagChipsHtml(entry.tags)}
         </div>
         <span class="badge status-${entry.checkpoint.status}">${STATUS_LABELS[entry.checkpoint.status]}</span>

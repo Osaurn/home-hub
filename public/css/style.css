@@ -377,6 +377,7 @@ form.task-form input[type="text"],
 form.task-form textarea,
 form.task-form input[type="number"],
 form.task-form input[type="date"],
+form.task-form select,
 .complete-row input[type="date"],
 .complete-row input[type="text"],
 .tag-add-row input {
@@ -628,3 +629,15 @@ textarea:focus-visible, [tabindex]:focus-visible {
   .kalle-bubble { font-size: 0.95rem; padding: 10px 14px; }
   .brand-logo { height: 32px; margin-right: 8px; }
 }
+
+/* Equipment */
+.equipment-grid { display: grid; gap: 12px; }
+.equipment-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+}
+.equipment-facts dt { color: var(--muted); }
+.equipment-facts dd { margin: 0; word-break: break-word; }

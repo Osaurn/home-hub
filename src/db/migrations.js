@@ -64,9 +64,23 @@ function migrateIntervalFirstDue(db) {
   if (!hasColumn) db.exec(`ALTER TABLE tasks ADD COLUMN interval_first_due TEXT`);
 }
 
+// Adds `equipment_id`: optional link from a task to the piece of equipment
+// it maintains. Deleting the equipment keeps the task and clears the link.
+function migrateTaskEquipment(db) {
+  const hasColumn = db
+    .prepare(`PRAGMA table_info(tasks)`)
+    .all()
+    .some((c) => c.name === 'equipment_id');
+  if (!hasColumn) {
+    db.exec(`ALTER TABLE tasks ADD COLUMN equipment_id INTEGER REFERENCES equipment(id) ON DELETE SET NULL`);
+  }
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_tasks_equipment ON tasks(equipment_id)`);
+}
+
 function runMigrations(db) {
   migrateMonthlyRecurrence(db);
   migrateIntervalFirstDue(db);
+  migrateTaskEquipment(db);
 }
 
 module.exports = { runMigrations };

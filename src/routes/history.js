@@ -5,9 +5,11 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   const sql = `
-    SELECT c.id, c.task_id, c.completed_at, c.note, t.title AS task_title
+    SELECT c.id, c.task_id, c.completed_at, c.note, t.title AS task_title,
+      t.equipment_id, e.name AS equipment_name
     FROM completions c
     JOIN tasks t ON t.id = c.task_id
+    LEFT JOIN equipment e ON e.id = t.equipment_id
     ORDER BY c.completed_at DESC, c.id DESC
   `;
 

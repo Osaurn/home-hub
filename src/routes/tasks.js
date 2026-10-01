@@ -7,7 +7,7 @@ const { getTagsForTask, syncTaskTags } = require('../lib/tagHelpers');
 
 const router = express.Router();
 
-function validateTaskBody(body) {
+function validateRecurrenceBody(body) {
   const { title, recurrence_type } = body;
   if (!title || !title.trim()) {
     const err = new Error('Otsikko vaaditaan');
@@ -85,6 +85,20 @@ function validateTaskBody(body) {
   };
 }
 
+function validateTaskBody(body) {
+  const data = validateRecurrenceBody(body);
+  let equipmentId = null;
+  if (body.equipment_id !== undefined && body.equipment_id !== null && body.equipment_id !== '') {
+    equipmentId = Number(body.equipment_id);
+    if (!Number.isInteger(equipmentId) || !db.prepare('SELECT id FROM equipment WHERE id = ?').get(equipmentId)) {
+      const err = new Error('Laitetta ei löytynyt');
+      err.status = 400;
+      throw err;
+    }
+  }
+  return { ...data, equipment_id: equipmentId };
+}
+
 function serializeTask(task) {
   return {
     ...task,
@@ -94,12 +108,23 @@ function serializeTask(task) {
 }
 
 router.get('/', (req, res) => {
-  const tasks = db.prepare('SELECT * FROM tasks ORDER BY title COLLATE NOCASE').all();
+  const tasks = db
+    .prepare(
+      `SELECT t.*, e.name AS equipment_name FROM tasks t
+       LEFT JOIN equipment e ON e.id = t.equipment_id
+       ORDER BY t.title COLLATE NOCASE`
+    )
+    .all();
   res.json(tasks.map((t) => ({ ...serializeTask(t), tags: getTagsForTask(db, t.id) })));
 });
 
 router.get('/:id', (req, res) => {
-  const task = db.prepare('SELECT * FROM tasks WHERE id = ?').get(req.params.id);
+  const task = db
+    .prepare(
+      `SELECT t.*, e.name AS equipment_name FROM tasks t
+       LEFT JOIN equipment e ON e.id = t.equipment_id WHERE t.id = ?`
+    )
+    .get(req.params.id);
   if (!task) return res.status(404).json({ error: 'Tehtävää ei löytynyt' });
 
   const completions = db
@@ -118,8 +143,8 @@ router.post('/', (req, res) => {
   const data = validateTaskBody(req.body);
   const result = db
     .prepare(
-      `INSERT INTO tasks (title, instructions, recurrence_type, quarters, months, interval_min_years, interval_max_years, interval_first_due)
-       VALUES (@title, @instructions, @recurrence_type, @quarters, @months, @interval_min_years, @interval_max_years, @interval_first_due)`
+      `INSERT INTO tasks (title, instructions, recurrence_type, quarters, months, interval_min_years, interval_max_years, interval_first_due, equipment_id)
+       VALUES (@title, @instructions, @recurrence_type, @quarters, @months, @interval_min_years, @interval_max_years, @interval_first_due, @equipment_id)`
     )
     .run(data);
   const tagIds = (Array.isArray(req.body.tag_ids) ? req.body.tag_ids : []).map(Number);
@@ -137,7 +162,7 @@ router.put('/:id', (req, res) => {
   db.prepare(
     `UPDATE tasks SET title = @title, instructions = @instructions, recurrence_type = @recurrence_type,
        quarters = @quarters, months = @months, interval_min_years = @interval_min_years, interval_max_years = @interval_max_years,
-       interval_first_due = @interval_first_due
+       interval_first_due = @interval_first_due, equipment_id = @equipment_id
      WHERE id = @id`
   ).run({ ...data, id: req.params.id });
 

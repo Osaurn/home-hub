@@ -29,6 +29,23 @@ const api = {
   createTag: (name) => api.request('POST', '/api/tags', { name }),
   deleteTag: (id) => api.request('DELETE', `/api/tags/${id}`),
 
+  getEquipmentList: () => api.request('GET', '/api/equipment'),
+  getEquipment: (id) => api.request('GET', `/api/equipment/${id}`),
+  createEquipment: (data) => api.request('POST', '/api/equipment', data),
+  updateEquipment: (id, data) => api.request('PUT', `/api/equipment/${id}`, data),
+  deleteEquipment: (id) => api.request('DELETE', `/api/equipment/${id}`),
+  deleteManual: (id) => api.request('DELETE', `/api/manuals/${id}`),
+  async uploadManuals(equipmentId, files) {
+    const formData = new FormData();
+    for (const file of files) formData.append('files', file);
+    const res = await fetch(`/api/equipment/${equipmentId}/manuals`, { method: 'POST', body: formData });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Virhe (${res.status})`);
+    }
+    return res.json();
+  },
+
   getHistory: (limit) => api.request('GET', `/api/history${limit ? `?limit=${limit}` : ''}`),
 
   deleteAttachment: (id) => api.request('DELETE', `/api/attachments/${id}`),
@@ -123,6 +140,7 @@ function historyEntryHtml(entry) {
   return `
     <div class="card">
       <div class="card-title"><a href="task-form.html?id=${entry.task_id}">${escapeHtml(entry.task_title)}</a></div>
+      ${entry.equipment_name ? `<div class="card-meta">Laite: <a href="equipment-detail.html?id=${entry.equipment_id}">${escapeHtml(entry.equipment_name)}</a></div>` : ''}
       <div class="card-meta">${entry.completed_at}${entry.note ? ' — ' + escapeHtml(entry.note) : ''}</div>
     </div>`;
 }

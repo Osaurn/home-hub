@@ -19,6 +19,7 @@ let pendingFiles = [];
 let allTags = [];
 let selectedTagIds = new Set();
 let instructionsMode = 'edit';
+let allEquipment = [];
 
 const instructionsToggle = document.getElementById('instructions-toggle');
 
@@ -57,6 +58,7 @@ instructionsToggle.addEventListener('click', () => {
 });
 
 function fillForm(task) {
+  document.getElementById('equipment_id').value = task.equipment_id || '';
   document.getElementById('title').value = task.title;
   instructionsInput.value = task.instructions || '';
   setInstructionsMode(task.instructions ? 'preview' : 'edit');
@@ -208,8 +210,16 @@ async function refreshTask() {
   renderTagChips();
 }
 
+function renderEquipmentOptions() {
+  const select = document.getElementById('equipment_id');
+  select.innerHTML =
+    '<option value="">— Ei laitetta —</option>' +
+    allEquipment.map((e) => `<option value="${e.id}">${escapeHtml(e.name)}</option>`).join('');
+}
+
 async function init() {
-  allTags = await api.getTags();
+  [allTags, allEquipment] = await Promise.all([api.getTags(), api.getEquipmentList()]);
+  renderEquipmentOptions();
   if (isEditing) {
     document.getElementById('page-title').textContent = 'Muokkaa tehtävää';
     deleteBtn.style.display = '';
@@ -219,6 +229,8 @@ async function init() {
   } else {
     setRecurrenceType('quarterly');
     setInstructionsMode('edit');
+    const presetEquipment = params.get('equipment_id');
+    if (presetEquipment) document.getElementById('equipment_id').value = presetEquipment;
     renderPendingFiles();
     renderTagChips();
   }
@@ -231,6 +243,7 @@ form.addEventListener('submit', async (e) => {
     instructions: instructionsInput.value,
     recurrence_type: recurrenceType,
     tag_ids: Array.from(selectedTagIds),
+    equipment_id: document.getElementById('equipment_id').value || null,
   };
   if (recurrenceType === 'quarterly') {
     data.quarters = Array.from(document.querySelectorAll('input[name="quarter"]:checked')).map((cb) => Number(cb.value));
