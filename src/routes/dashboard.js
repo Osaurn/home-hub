@@ -51,7 +51,12 @@ router.get('/quarters/:q', (req, res) => {
   }
 
   const now = new Date();
-  const tasks = db.prepare("SELECT * FROM tasks WHERE recurrence_type IN ('quarterly', 'monthly')").all();
+  const tasks = db
+    .prepare(
+      `SELECT t.*, e.name AS equipment_name FROM tasks t LEFT JOIN equipment e ON e.id = t.equipment_id
+       WHERE t.recurrence_type IN ('quarterly', 'monthly')`
+    )
+    .all();
   const completionsByTask = loadCompletionsByTask();
   const monthsInQuarter = QUARTER_MONTHS[q];
 
@@ -68,6 +73,8 @@ router.get('/quarters/:q', (req, res) => {
         taskId: task.id,
         title: task.title,
         instructions: task.instructions,
+        equipmentId: task.equipment_id,
+        equipmentName: task.equipment_name,
         checkpoint,
         tags: getTagsForTask(db, task.id),
       });

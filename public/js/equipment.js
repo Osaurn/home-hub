@@ -5,6 +5,15 @@ function equipmentCardHtml(e) {
   const status = e.overdue_count > 0 ? ' status-overdue' : e.due_count > 0 ? ' status-due' : '';
   const meta = [e.category, e.location, e.model].filter(Boolean).map(escapeHtml).join(' · ');
   const manuals = e.manual_count === 1 ? '1 käyttöohje' : `${e.manual_count} käyttöohjetta`;
+  const contents = [
+    e.manual_count > 0 ? manuals : null,
+    e.instructions ? 'Pikaohjeet' : null,
+    e.notes ? 'Muistiinpanot' : null,
+  ].filter(Boolean);
+  const pills = contents.length
+    ? `<div class="tag-pills">${contents.map((c) => `<span class="tag-pill">${c}</span>`).join('')}</div>`
+    : '<div class="card-meta">Ei vielä ohjeita tai muistiinpanoja</div>';
+  const snippet = e.notes ? `<div class="equipment-snippet">${escapeHtml(e.notes.replace(/\s+/g, ' '))}</div>` : '';
   const tasks = e.task_count === 1 ? '1 tehtävä' : `${e.task_count} tehtävää`;
   return `
     <div class="card${status}">
@@ -12,7 +21,9 @@ function equipmentCardHtml(e) {
         <div>
           <div class="card-title"><a href="equipment-detail.html?id=${e.id}">${escapeHtml(e.name)}</a></div>
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
-          <div class="card-meta">${manuals} · ${tasks}</div>
+          <div class="card-meta">${tasks}</div>
+          ${pills}
+          ${snippet}
         </div>
         <div>${badges.join(' ')} ${warrantyBadgeHtml(e.warranty)}</div>
       </div>

@@ -210,6 +210,41 @@ async function refreshTask() {
   renderTagChips();
 }
 
+let guideRequest = 0;
+
+async function loadEquipmentGuide() {
+  const panel = document.getElementById('equipment-guide');
+  const id = document.getElementById('equipment_id').value;
+  const request = ++guideRequest;
+  if (!id) {
+    panel.style.display = 'none';
+    panel.innerHTML = '';
+    return;
+  }
+  let e;
+  try {
+    e = await api.getEquipment(id);
+  } catch (err) {
+    return;
+  }
+  if (request !== guideRequest) return; // selection changed while loading
+
+  const hasContent = e.manuals.length > 0 || e.instructions || e.notes;
+  panel.innerHTML = `
+    <div class="field-header">
+      <strong>Laitteen ohjeet: ${escapeHtml(e.name)}</strong>
+      <a class="btn secondary small" href="equipment-detail.html?id=${e.id}">Avaa laitteen sivu</a>
+    </div>
+    ${hasContent ? '' : `<p class="muted">Laitteelle ei ole vielä ohjeita. <a href="equipment-form.html?id=${e.id}">Lisää ohjeita</a></p>`}
+    <div id="equipment-manuals"></div>
+    ${e.instructions ? `<h3 class="guide-heading">Pikaohjeet</h3><div class="instructions-preview">${marked.parse(e.instructions)}</div>` : ''}
+    ${e.notes ? `<h3 class="guide-heading">Muistiinpanot</h3><div style="white-space:pre-wrap;">${escapeHtml(e.notes)}</div>` : ''}`;
+  if (e.manuals.length > 0) renderManualViewer(document.getElementById('equipment-manuals'), e.manuals);
+  panel.style.display = '';
+}
+
+document.getElementById('equipment_id').addEventListener('change', loadEquipmentGuide);
+
 function renderEquipmentOptions() {
   const select = document.getElementById('equipment_id');
   select.innerHTML =
@@ -226,11 +261,15 @@ async function init() {
     detailSections.style.display = '';
     document.getElementById('complete-date').value = todayISO();
     await refreshTask();
+    loadEquipmentGuide();
   } else {
     setRecurrenceType('quarterly');
     setInstructionsMode('edit');
     const presetEquipment = params.get('equipment_id');
-    if (presetEquipment) document.getElementById('equipment_id').value = presetEquipment;
+    if (presetEquipment) {
+      document.getElementById('equipment_id').value = presetEquipment;
+      loadEquipmentGuide();
+    }
     renderPendingFiles();
     renderTagChips();
   }
