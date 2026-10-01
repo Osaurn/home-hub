@@ -84,11 +84,21 @@ function migrateEquipmentWarranty(db) {
   if (!cols.includes('warranty_notes')) db.exec(`ALTER TABLE equipment ADD COLUMN warranty_notes TEXT`);
 }
 
+// Adds an optional emoji override for the equipment icon (null = automatic).
+function migrateEquipmentIcon(db) {
+  const hasColumn = db
+    .prepare(`PRAGMA table_info(equipment)`)
+    .all()
+    .some((c) => c.name === 'icon');
+  if (!hasColumn) db.exec(`ALTER TABLE equipment ADD COLUMN icon TEXT`);
+}
+
 function runMigrations(db) {
   migrateMonthlyRecurrence(db);
   migrateIntervalFirstDue(db);
   migrateTaskEquipment(db);
   migrateEquipmentWarranty(db);
+  migrateEquipmentIcon(db);
 }
 
 module.exports = { runMigrations };

@@ -9,6 +9,7 @@ const deleteBtn = document.getElementById('delete-btn');
 const TEXT_FIELDS = ['name', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'notes'];
 
 let pendingFiles = [];
+let selectedIcon = null; // null = automatic
 let instructionsMode = 'edit';
 
 function setInstructionsMode(mode) {
@@ -30,6 +31,21 @@ function setInstructionsMode(mode) {
 instructionsToggle.addEventListener('click', () => {
   setInstructionsMode(instructionsMode === 'edit' ? 'preview' : 'edit');
 });
+
+function renderIconPicker() {
+  const picker = document.getElementById('icon-picker');
+  picker.innerHTML =
+    `<button type="button" class="icon-choice auto${selectedIcon === null ? ' active' : ''}" data-icon="">Automaattinen</button>` +
+    EquipmentIcons.PICKER_ICONS.map(
+      (i) => `<button type="button" class="icon-choice${selectedIcon === i ? ' active' : ''}" data-icon="${i}" aria-label="Kuvake ${i}">${i}</button>`
+    ).join('');
+  picker.querySelectorAll('.icon-choice').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedIcon = btn.dataset.icon || null;
+      renderIconPicker();
+    });
+  });
+}
 
 function renderManuals(manuals) {
   const list = document.getElementById('manual-list');
@@ -81,11 +97,26 @@ async function refreshEquipment() {
   const e = await api.getEquipment(equipmentId);
   for (const f of TEXT_FIELDS) document.getElementById(f).value = e[f] || '';
   instructionsInput.value = e.instructions || '';
+  selectedIcon = e.icon || null;
+  renderIconPicker();
   setInstructionsMode(e.instructions ? 'preview' : 'edit');
   renderManuals(e.manuals);
 }
 
+async function loadLocationOptions() {
+  try {
+    const list = await api.getEquipmentList();
+    const locations = [...new Set(list.map((e) => e.location).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fi'));
+    document.getElementById('location-options').innerHTML = locations
+      .map((l) => `<option value="${escapeHtml(l)}"></option>`)
+      .join('');
+  } catch {
+    // suggestions are optional
+  }
+}
+
 async function init() {
+  loadLocationOptions();
   if (isEditing) {
     document.getElementById('page-title').textContent = 'Muokkaa laitetta';
     document.getElementById('cancel-link').href = `equipment-detail.html?id=${equipmentId}`;
@@ -93,13 +124,14 @@ async function init() {
     await refreshEquipment();
   } else {
     setInstructionsMode('edit');
+    renderIconPicker();
     renderPendingFiles();
   }
 }
 
 document.getElementById('equipment-form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  const data = { instructions: instructionsInput.value };
+  const data = { instructions: instructionsInput.value, icon: selectedIcon };
   for (const f of TEXT_FIELDS) data[f] = document.getElementById(f).value;
 
   try {

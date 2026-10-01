@@ -9,7 +9,7 @@ const { warrantyStatus } = require('../lib/warranty');
 
 const router = express.Router();
 
-const FIELDS = ['category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions', 'notes'];
+const FIELDS = ['icon', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions', 'notes'];
 
 const INLINE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 
@@ -29,6 +29,9 @@ function validateEquipmentBody(body) {
   }
   if (data.purchase_date !== null && !/^\d{4}-\d{2}-\d{2}$/.test(data.purchase_date)) {
     throw badRequest('Virheellinen hankintapäivä');
+  }
+  if (data.icon !== null && [...data.icon].length > 8) {
+    throw badRequest('Virheellinen kuvake');
   }
   if (data.warranty_expires !== null && !/^\d{4}-\d{2}-\d{2}$/.test(data.warranty_expires)) {
     throw badRequest('Virheellinen takuun päättymispäivä');
@@ -95,8 +98,8 @@ router.post('/equipment', (req, res) => {
   const data = validateEquipmentBody(req.body);
   const result = db
     .prepare(
-      `INSERT INTO equipment (name, category, location, model, serial_number, purchase_date, warranty_expires, warranty_notes, instructions, notes)
-       VALUES (@name, @category, @location, @model, @serial_number, @purchase_date, @warranty_expires, @warranty_notes, @instructions, @notes)`
+      `INSERT INTO equipment (name, icon, category, location, model, serial_number, purchase_date, warranty_expires, warranty_notes, instructions, notes)
+       VALUES (@name, @icon, @category, @location, @model, @serial_number, @purchase_date, @warranty_expires, @warranty_notes, @instructions, @notes)`
     )
     .run(data);
   res.status(201).json(db.prepare('SELECT * FROM equipment WHERE id = ?').get(result.lastInsertRowid));
@@ -128,7 +131,7 @@ router.put('/equipment/:id', (req, res) => {
 
   const data = validateEquipmentBody(req.body);
   db.prepare(
-    `UPDATE equipment SET name = @name, category = @category, location = @location, model = @model,
+    `UPDATE equipment SET name = @name, icon = @icon, category = @category, location = @location, model = @model,
        serial_number = @serial_number, purchase_date = @purchase_date,
        warranty_expires = @warranty_expires, warranty_notes = @warranty_notes, instructions = @instructions, notes = @notes
      WHERE id = @id`

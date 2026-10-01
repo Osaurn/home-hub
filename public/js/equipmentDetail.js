@@ -46,7 +46,7 @@ function render(e) {
 
   document.getElementById('detail').innerHTML = `
     <div class="card-header">
-      <h2 style="margin:0;">${escapeHtml(e.name)}</h2>
+      <h2 style="margin:0;"><span aria-hidden="true">${EquipmentIcons.equipmentIcon(e)}</span> ${escapeHtml(e.name)}</h2>
       <a class="btn secondary small" href="equipment-form.html?id=${e.id}">Muokkaa</a>
     </div>
     ${factsHtml(e)}

@@ -26,6 +26,9 @@
       <label for="name">Nimi</label>
       <input type="text" id="name" required placeholder="esim. Ilmanvaihtokone" />
 
+      <label>Kuvake</label>
+      <div class="icon-picker" id="icon-picker"></div>
+
       <label for="category">Tyyppi</label>
       <input type="text" id="category" list="category-options" placeholder="esim. Lämmitys, Ilmanvaihto" />
       <datalist id="category-options">
@@ -37,7 +40,8 @@
       </datalist>
 
       <label for="location">Sijainti</label>
-      <input type="text" id="location" placeholder="esim. Tekninen tila" />
+      <input type="text" id="location" list="location-options" placeholder="esim. Tekninen tila" />
+      <datalist id="location-options"></datalist>
 
       <label for="model">Merkki ja malli</label>
       <input type="text" id="model" />
@@ -82,6 +86,7 @@
   <script src="vendor/marked.js"></script>
   <script src="js/api.js"></script>
   <script src="js/help.js"></script>
+  <script src="js/equipmentIcons.js"></script>
   <script src="js/equipmentForm.js"></script>
 </body>
 </html>

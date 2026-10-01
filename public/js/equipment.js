@@ -1,9 +1,50 @@
-function equipmentCardHtml(e) {
+const FILTER_STORAGE_KEY = 'equipmentFilters';
+const FILTER_ROWS = [
+  { field: 'location', label: 'Sijainti' },
+  { field: 'category', label: 'Liittyy' },
+];
+
+let allEquipment = [];
+let filters = loadFilters();
+
+function loadFilters() {
+  try {
+    return { location: null, category: null, ...JSON.parse(sessionStorage.getItem(FILTER_STORAGE_KEY) || '{}') };
+  } catch {
+    return { location: null, category: null };
+  }
+}
+
+function saveFilters() {
+  try {
+    sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+  } catch {
+    // remembering the filter is optional
+  }
+}
+
+// "Ullakko" and "ullakko " are the same place.
+function filterKey(value) {
+  return (value || '').trim().toLowerCase();
+}
+
+function distinctOptions(field) {
+  const seen = new Map();
+  for (const e of allEquipment) {
+    const key = filterKey(e[field]);
+    if (key && !seen.has(key)) seen.set(key, key.charAt(0).toUpperCase() + e[field].trim().slice(1));
+  }
+  return [...seen].map(([key, label]) => ({ key, label })).sort((a, b) => a.label.localeCompare(b.label, 'fi'));
+}
+
+function equipmentTileHtml(e) {
   const badges = [];
   if (e.overdue_count > 0) badges.push(`<span class="badge status-overdue">Myöhässä ${e.overdue_count}</span>`);
   if (e.due_count > 0) badges.push(`<span class="badge status-due">Ajankohtainen ${e.due_count}</span>`);
+  const warranty = warrantyBadgeHtml(e.warranty);
+  if (warranty) badges.push(warranty);
   const status = e.overdue_count > 0 ? ' status-overdue' : e.due_count > 0 ? ' status-due' : '';
-  const meta = [e.category, e.location, e.model].filter(Boolean).map(escapeHtml).join(' · ');
+  const meta = [e.location, e.model].filter(Boolean).map(escapeHtml).join(' · ');
   const manuals = e.manual_count === 1 ? '1 käyttöohje' : `${e.manual_count} käyttöohjetta`;
   const contents = [
     e.manual_count > 0 ? manuals : null,
@@ -12,35 +53,90 @@ function equipmentCardHtml(e) {
   ].filter(Boolean);
   const pills = contents.length
     ? `<div class="tag-pills">${contents.map((c) => `<span class="tag-pill">${c}</span>`).join('')}</div>`
-    : '<div class="card-meta">Ei vielä ohjeita tai muistiinpanoja</div>';
+    : '<div class="card-meta">Ei vielä ohjeita</div>';
   const snippet = e.notes ? `<div class="equipment-snippet">${escapeHtml(e.notes.replace(/\s+/g, ' '))}</div>` : '';
   const tasks = e.task_count === 1 ? '1 tehtävä' : `${e.task_count} tehtävää`;
   return `
-    <div class="card${status}">
-      <div class="card-header">
-        <div>
-          <div class="card-title"><a href="equipment-detail.html?id=${e.id}">${escapeHtml(e.name)}</a></div>
-          ${meta ? `<div class="card-meta">${meta}</div>` : ''}
-          <div class="card-meta">${tasks}</div>
-          ${pills}
-          ${snippet}
+    <a class="equipment-tile card${status}" href="equipment-detail.html?id=${e.id}">
+      <span class="equipment-icon" aria-hidden="true">${EquipmentIcons.equipmentIcon(e)}</span>
+      <span class="equipment-tile-name">${escapeHtml(e.name)}</span>
+      ${e.category ? `<span class="card-meta">${escapeHtml(e.category)}</span>` : ''}
+      ${meta ? `<span class="card-meta">${meta}</span>` : ''}
+      <span class="card-meta">${tasks}</span>
+      ${badges.length ? `<span class="equipment-tile-badges">${badges.join(' ')}</span>` : ''}
+      ${pills}
+      ${snippet}
+    </a>`;
+}
+
+function renderFilters() {
+  const bar = document.getElementById('equipment-filters');
+  const rows = FILTER_ROWS.map((row) => ({ ...row, options: distinctOptions(row.field) })).filter(
+    (row) => row.options.length >= 2
+  );
+
+  // Drop a saved filter whose value no longer exists.
+  for (const row of FILTER_ROWS) {
+    if (filters[row.field] && !distinctOptions(row.field).some((o) => o.key === filters[row.field])) {
+      filters[row.field] = null;
+    }
+  }
+
+  bar.innerHTML = rows
+    .map(
+      (row) => `
+      <div class="equipment-filter-row">
+        <span class="equipment-filter-label">${row.label}</span>
+        <div class="tag-chips">
+          <button type="button" class="tag-chip filter-chip${filters[row.field] === null ? ' active' : ''}" data-field="${row.field}" data-key="">Kaikki</button>
+          ${row.options
+            .map(
+              (o) =>
+                `<button type="button" class="tag-chip filter-chip${filters[row.field] === o.key ? ' active' : ''}" data-field="${row.field}" data-key="${escapeHtml(o.key)}">${escapeHtml(o.label)}</button>`
+            )
+            .join('')}
         </div>
-        <div>${badges.join(' ')} ${warrantyBadgeHtml(e.warranty)}</div>
-      </div>
-      <div class="form-actions">
-        <a class="btn small" href="equipment-detail.html?id=${e.id}">Avaa ohjeet</a>
-        <a class="btn secondary small" href="equipment-form.html?id=${e.id}">Muokkaa</a>
-      </div>
-    </div>`;
+      </div>`
+    )
+    .join('');
+
+  bar.querySelectorAll('.filter-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filters[btn.dataset.field] = btn.dataset.key || null;
+      saveFilters();
+      renderFilters();
+      renderGrid();
+    });
+  });
+}
+
+function renderGrid() {
+  const container = document.getElementById('equipment-list');
+  if (allEquipment.length === 0) {
+    container.innerHTML = '<div class="empty-state">Ei vielä laitteita. Lisää ensimmäinen laite yllä olevasta painikkeesta.</div>';
+    return;
+  }
+  const visible = allEquipment.filter((e) =>
+    FILTER_ROWS.every((row) => !filters[row.field] || filterKey(e[row.field]) === filters[row.field])
+  );
+  if (visible.length === 0) {
+    container.innerHTML = `<div class="empty-state">Ei laitteita näillä suodattimilla.
+      <div><button type="button" class="btn secondary small" id="clear-filters">Tyhjennä suodattimet</button></div></div>`;
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      filters = { location: null, category: null };
+      saveFilters();
+      renderFilters();
+      renderGrid();
+    });
+    return;
+  }
+  container.innerHTML = visible.map(equipmentTileHtml).join('');
 }
 
 async function loadEquipment() {
-  const list = await api.getEquipmentList();
-  const container = document.getElementById('equipment-list');
-  container.innerHTML =
-    list.length === 0
-      ? '<div class="empty-state">Ei vielä laitteita. Lisää ensimmäinen laite yllä olevasta painikkeesta.</div>'
-      : list.map(equipmentCardHtml).join('');
+  allEquipment = await api.getEquipmentList();
+  renderFilters();
+  renderGrid();
 }
 
 loadEquipment().catch((err) => {

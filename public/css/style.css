@@ -631,7 +631,53 @@ textarea:focus-visible, [tabindex]:focus-visible {
 }
 
 /* Equipment */
-.equipment-grid { display: grid; gap: 12px; }
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.equipment-grid > .empty-state { grid-column: 1 / -1; }
+
+.equipment-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  text-align: center;
+  color: inherit;
+  text-decoration: none;
+}
+.equipment-tile:hover { border-color: var(--ink); }
+.equipment-tile:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.equipment-icon { font-size: 2.2rem; line-height: 1.2; }
+.equipment-tile-name { font-weight: 800; font-size: 1.05rem; word-break: break-word; }
+.equipment-tile-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 4px; }
+.equipment-tile .tag-pills { justify-content: center; margin-top: 4px; }
+.equipment-tile .equipment-snippet {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.equipment-filters { display: grid; gap: 8px; margin-bottom: 16px; }
+.equipment-filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.equipment-filter-label { color: var(--muted); font-size: 0.85rem; font-weight: 700; min-width: 64px; }
+
+.icon-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+.icon-choice {
+  min-width: 42px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.icon-choice.auto { font-size: 0.9rem; font-family: inherit; }
+.icon-choice:hover { border-color: var(--ink); }
+.icon-choice.active { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .equipment-facts {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -670,3 +716,8 @@ textarea:focus-visible, [tabindex]:focus-visible {
 }
 .guide-heading { font-size: 0.95rem; margin: 14px 0 6px; }
 #equipment-guide .field-header { margin-bottom: 8px; }
+@media (max-width: 600px) {
+  .equipment-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .equipment-tile { padding: 12px 8px; }
+  .equipment-tile-name { font-size: 0.95rem; }
+}
