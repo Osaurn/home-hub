@@ -4,7 +4,7 @@
     <p>Kalle Kotiapuri pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
 
     <h3>Siirtyminen sovelluksessa</h3>
-    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista), "Laitteet" (laitteet ja niiden ohjeet), "Materiaalit" (kodissa käytetyt materiaalit) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
+    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Tehtävät" (koko tehtävälista), "Laitteet" (laitteet ja niiden ohjeet), "Materiaalit" (kodissa käytetyt materiaalit) ja "Päiväkirja" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
 
     <h3>Kalle ja hänen tunnelmansa</h3>
     <p>Etusivun ylälaidassa Kalle seuraa tilannetta ja kommentoi sitä puhekuplassa. Kun kaikki on tehty, Kalle on innoissaan. Kun tehtäviä on myöhässä, hän huolestuu, uupuu ja lopulta surullisena kaipaa apuasi.</p>
@@ -33,7 +33,7 @@
 
     <h3>Tunnisteet</h3>
     <p>Tunnisteilla voi ryhmitellä tehtäviä vapaasti, esim. "Sisätilat" tai "Turvallisuus". Tehtävän muokkaussivulla klikkaamalla tunnistetta lisäät tai poistat sen kyseiseltä tehtävältä; uuden tunnisteen voi luoda "Uusi tunniste" -kentästä.</p>
-    <p>"Kaikki tehtävät" -sivulla ja vuosikellon vuodenaika-näkymässä tunnisteet näkyvät suodattimina listan yläpuolella — paina tunnistetta rajataksesi näkymän siihen. "Kaikki tehtävät" -sivulla jokaisen tunnisteen vieressä on myös punainen ×, jolla tunnisteen voi poistaa kokonaan (kysytään aina vahvistus, ja siinä näkyy, kuinka moneen tehtävään tunniste on tällä hetkellä liitetty).</p>
+    <p>"Tehtävät" -sivulla ja vuosikellon vuodenaika-näkymässä tunnisteet näkyvät suodattimina listan yläpuolella — paina tunnistetta rajataksesi näkymän siihen. "Tehtävät" -sivulla jokaisen tunnisteen vieressä on myös punainen ×, jolla tunnisteen voi poistaa kokonaan (kysytään aina vahvistus, ja siinä näkyy, kuinka moneen tehtävään tunniste on tällä hetkellä liitetty).</p>
 
     <h3>Ohjeet ja liitteet</h3>
     <p>Jokaiselle tehtävälle voi kirjoittaa ohjeet (tukee Markdown-muotoilua) ja liittää tiedostoja, kuten käyttöohjeita tai kuvia. Sekä ohjeet että liitteet löytyvät ja niitä voi muokata milloin tahansa tehtävän muokkaussivulta.</p>
@@ -46,8 +46,8 @@
     <p>"Materiaalit"-sivu on kodin tietopankki: tallenna sinne kodissa käytetyt materiaalit, jotta tiedät esimerkiksi vuosien päästä, mikä ulkomaali, väri tai saumausaine talossa on. Jokaiselle materiaalille voi kirjata tyypin, käyttökohteen, merkin ja tuotteen, värin nimen ja koodin (sekä värinäytteen), kiillon, määrän, ostopaikan ja -päivän sekä muistiinpanot. Liitä mukaan kuva purkin etiketistä, tuoteseloste tai kuitti.</p>
     <p>Materiaalit näkyvät ruudukkona, jossa jokaisella on aihetta vastaava kuvake (voit valita myös oman). Hakukenttä etsii nimestä, merkistä, väristä ja muistiinpanoista, ja Tyyppi- ja Käyttökohde-suodattimilla rajaat listan.</p>
 
-    <h3>Historia</h3>
-    <p>Etusivun "Viimeksi tehdyt" -osio näyttää viisi tuoreinta tekokertaa, ja "Historia"-sivu koko listan aikajärjestyksessä. Yksittäisen tehtävän omalla muokkaussivulla näkyy vain sen tehtävän tekokerrat, ja vahingossa tehdyn merkinnän voi kumota "Kumoa"-painikkeella.</p>
+    <h3>Päiväkirja</h3>
+    <p>Etusivun "Viimeksi tehdyt" -osio näyttää viisi tuoreinta tekokertaa, ja "Päiväkirja"-sivu koko listan aikajärjestyksessä. Päiväkirjan hakukentällä voi etsiä tekokertoja tehtävän, laitteen, muistiinpanon tai päivämäärän perusteella. Yksittäisen tehtävän omalla muokkaussivulla näkyy vain sen tehtävän tekokerrat, ja vahingossa tehdyn merkinnän voi kumota "Kumoa"-painikkeella.</p>
 
     <h3>Käyttäjät</h3>
     <p>Sovellusta voi käyttää samaan aikaan useampi laite kotiverkossa — kaikki näkevät saman ajantasaisen tilanteen.</p>
