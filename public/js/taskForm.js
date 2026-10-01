@@ -239,7 +239,7 @@ async function loadEquipmentGuide() {
     <div id="equipment-manuals"></div>
     ${e.instructions ? `<h3 class="guide-heading">Pikaohjeet</h3><div class="instructions-preview">${marked.parse(e.instructions)}</div>` : ''}
     ${e.notes ? `<h3 class="guide-heading">Muistiinpanot</h3><div style="white-space:pre-wrap;">${escapeHtml(e.notes)}</div>` : ''}`;
-  if (e.manuals.length > 0) renderManualViewer(document.getElementById('equipment-manuals'), e.manuals);
+  if (e.manuals.length > 0) renderManualViewer(document.getElementById('equipment-manuals'), e.manuals, { collapsedByDefault: true });
   panel.style.display = '';
 }
 

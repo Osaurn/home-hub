@@ -25,7 +25,12 @@ function viewerHtml(m) {
     </div>`;
 }
 
-function renderManualViewer(container, manuals) {
+// options.collapsedByDefault: start with the preview hidden and don't read or
+// write the saved preference (used on the task page, where the preview
+// should only appear when the user asks for it).
+function renderManualViewer(container, manuals, options = {}) {
+  const collapsedByDefault = Boolean(options.collapsedByDefault);
+  let openState = !collapsedByDefault;
   if (manuals.length === 0) {
     container.innerHTML = '<p class="muted">Ei käyttöohjeita. Lisää niitä muokkaussivulta.</p>';
     return;
@@ -35,7 +40,7 @@ function renderManualViewer(container, manuals) {
   let selected = previewable[0] || null;
 
   function draw() {
-    const open = previewOpen();
+    const open = collapsedByDefault ? openState : previewOpen();
     const chips =
       previewable.length > 1
         ? `<div class="tag-chips">${previewable
@@ -63,15 +68,20 @@ function renderManualViewer(container, manuals) {
     container.querySelectorAll('[data-manual-id]').forEach((btn) => {
       btn.addEventListener('click', () => {
         selected = previewable.find((m) => m.id === Number(btn.dataset.manualId));
+        if (collapsedByDefault) openState = true;
         draw();
       });
     });
     const t = container.querySelector('.preview-toggle');
     if (t) {
       t.addEventListener('click', () => {
-        try {
-          localStorage.setItem(PREVIEW_KEY, open ? '0' : '1');
-        } catch {}
+        if (collapsedByDefault) {
+          openState = !open;
+        } else {
+          try {
+            localStorage.setItem(PREVIEW_KEY, open ? '0' : '1');
+          } catch {}
+        }
         draw();
       });
     }
