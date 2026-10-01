@@ -58,6 +58,39 @@ function withWarranty(e) {
   return { ...e, warranty: warrantyStatus(e.warranty_expires) };
 }
 
+function validateEventBody(body) {
+  const title = typeof body.title === 'string' ? body.title.trim() : '';
+  if (!title) throw badRequest('Kuvaus vaaditaan');
+  if (title.length > 200) throw badRequest('Kuvaus on liian pitkä');
+  const eventDate = typeof body.event_date === 'string' ? body.event_date.trim() : '';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate)) throw badRequest('Virheellinen päivämäärä');
+  const text = (v) => (typeof v === 'string' && v.trim() ? v.trim() : null);
+  return { title, event_date: eventDate, performed_by: text(body.performed_by), note: text(body.note) };
+}
+
+// Maintenance history: completions of linked tasks plus manually logged
+// events, newest first.
+function loadHistory(equipmentId) {
+  const completions = db
+    .prepare(
+      `SELECT c.id, c.task_id, c.completed_at AS date, c.note, c.created_at, t.title
+       FROM completions c JOIN tasks t ON t.id = c.task_id
+       WHERE t.equipment_id = ?`
+    )
+    .all(equipmentId)
+    .map((c) => ({ ...c, kind: 'task' }));
+  const events = db
+    .prepare(
+      `SELECT id, event_date AS date, title, performed_by, note, created_at
+       FROM equipment_events WHERE equipment_id = ?`
+    )
+    .all(equipmentId)
+    .map((e) => ({ ...e, kind: 'event' }));
+  return [...completions, ...events].sort(
+    (a, b) => b.date.localeCompare(a.date) || b.created_at.localeCompare(a.created_at) || b.id - a.id
+  );
+}
+
 function loadTasksWithCheckpoints(equipmentId) {
   const tasks = db.prepare('SELECT * FROM tasks WHERE equipment_id = ? ORDER BY title COLLATE NOCASE').all(equipmentId);
   return tasks.map((task) => {
@@ -113,14 +146,7 @@ router.get('/equipment/:id', (req, res) => {
     .prepare('SELECT * FROM equipment_manuals WHERE equipment_id = ? ORDER BY uploaded_at DESC, id DESC')
     .all(equipment.id);
   const tasks = loadTasksWithCheckpoints(equipment.id);
-  const history = db
-    .prepare(
-      `SELECT c.id, c.task_id, c.completed_at, c.note, t.title AS task_title
-       FROM completions c JOIN tasks t ON t.id = c.task_id
-       WHERE t.equipment_id = ?
-       ORDER BY c.completed_at DESC, c.id DESC`
-    )
-    .all(equipment.id);
+  const history = loadHistory(equipment.id);
 
   res.json({ ...withWarranty(equipment), manuals, tasks, history });
 });
@@ -146,6 +172,37 @@ router.delete('/equipment/:id', (req, res) => {
   db.prepare('DELETE FROM equipment WHERE id = ?').run(equipment.id);
   // Manual rows are gone via cascade; remove the whole manuals folder.
   fs.rm(path.join(UPLOADS_DIR, 'equipment', String(equipment.id)), { recursive: true, force: true }, () => {});
+  res.status(204).end();
+});
+
+router.post('/equipment/:id/events', (req, res) => {
+  const equipment = db.prepare('SELECT id FROM equipment WHERE id = ?').get(req.params.id);
+  if (!equipment) return res.status(404).json({ error: 'Laitetta ei löytynyt' });
+
+  const data = validateEventBody(req.body);
+  const result = db
+    .prepare(
+      `INSERT INTO equipment_events (equipment_id, event_date, title, performed_by, note)
+       VALUES (?, ?, ?, ?, ?)`
+    )
+    .run(equipment.id, data.event_date, data.title, data.performed_by, data.note);
+  res.status(201).json(db.prepare('SELECT * FROM equipment_events WHERE id = ?').get(result.lastInsertRowid));
+});
+
+router.put('/events/:id', (req, res) => {
+  const existing = db.prepare('SELECT id FROM equipment_events WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Merkintää ei löytynyt' });
+
+  const data = validateEventBody(req.body);
+  db.prepare(
+    `UPDATE equipment_events SET event_date = ?, title = ?, performed_by = ?, note = ? WHERE id = ?`
+  ).run(data.event_date, data.title, data.performed_by, data.note, existing.id);
+  res.json(db.prepare('SELECT * FROM equipment_events WHERE id = ?').get(existing.id));
+});
+
+router.delete('/events/:id', (req, res) => {
+  const result = db.prepare('DELETE FROM equipment_events WHERE id = ?').run(req.params.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Merkintää ei löytynyt' });
   res.status(204).end();
 });
 

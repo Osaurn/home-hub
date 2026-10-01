@@ -34,6 +34,9 @@ const api = {
   createEquipment: (data) => api.request('POST', '/api/equipment', data),
   updateEquipment: (id, data) => api.request('PUT', `/api/equipment/${id}`, data),
   deleteEquipment: (id) => api.request('DELETE', `/api/equipment/${id}`),
+  addEquipmentEvent: (equipmentId, data) => api.request('POST', `/api/equipment/${equipmentId}/events`, data),
+  updateEquipmentEvent: (id, data) => api.request('PUT', `/api/events/${id}`, data),
+  deleteEquipmentEvent: (id) => api.request('DELETE', `/api/events/${id}`),
   deleteManual: (id) => api.request('DELETE', `/api/manuals/${id}`),
   async uploadManuals(equipmentId, files) {
     const formData = new FormData();

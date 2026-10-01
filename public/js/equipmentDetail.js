@@ -35,14 +35,7 @@ function render(e) {
   const history =
     e.history.length === 0
       ? '<li class="muted">Ei vielä huoltohistoriaa.</li>'
-      : e.history
-          .map(
-            (h) => `
-        <li>
-          <span>${h.completed_at} — <a href="task-form.html?id=${h.task_id}">${escapeHtml(h.task_title)}</a>${h.note ? ' — ' + escapeHtml(h.note) : ''}</span>
-        </li>`
-          )
-          .join('');
+      : e.history.map(historyRowHtml).join('');
 
   document.getElementById('detail').innerHTML = `
     <div class="card-header">
@@ -64,10 +57,99 @@ function render(e) {
     </div>
 
     <h2 class="section-title">Huoltohistoria</h2>
-    <div class="card"><ul class="completion-list" style="margin:0;">${history}</ul></div>
-
+    <div class="card">
+      <ul class="completion-list" style="margin:0;" id="history-list">${history}</ul>
+      <div id="event-form-area">
+        <div class="form-actions"><button type="button" class="btn secondary small" id="add-event-btn">+ Lisää merkintä</button></div>
+      </div>
+    </div>
   `;
   renderManualViewer(document.getElementById('manuals'), e.manuals);
+  wireHistory(e);
+}
+
+function historyRowHtml(h) {
+  if (h.kind === 'task') {
+    return `
+      <li>
+        <span>${h.date} — <a href="task-form.html?id=${h.task_id}">${escapeHtml(h.title)}</a>${h.note ? ' — ' + escapeHtml(h.note) : ''}</span>
+        <span class="badge status-done">Tehtävä</span>
+      </li>`;
+  }
+  const meta = [h.performed_by ? `Tekijä: ${escapeHtml(h.performed_by)}` : null, h.note ? escapeHtml(h.note) : null]
+    .filter(Boolean)
+    .join(' — ');
+  return `
+    <li>
+      <span>${h.date} — <strong>${escapeHtml(h.title)}</strong>${meta ? ' — ' + meta : ''}</span>
+      <span>
+        <button type="button" class="btn secondary small" data-edit-event="${h.id}">Muokkaa</button>
+        <button type="button" class="btn danger small" data-delete-event="${h.id}">Poista</button>
+      </span>
+    </li>`;
+}
+
+function eventFormHtml(ev) {
+  return `
+    <form class="task-form event-form" id="event-form">
+      <label for="event-title">Mitä tehtiin</label>
+      <input type="text" id="event-title" required maxlength="200" placeholder="esim. Huoltomies vaihtoi puhaltimen" value="${escapeHtml(ev ? ev.title : '')}" />
+      <label for="event-date">Päivämäärä</label>
+      <input type="date" id="event-date" required value="${ev ? ev.date : todayISO()}" />
+      <label for="event-by">Tekijä (valinnainen)</label>
+      <input type="text" id="event-by" placeholder="esim. Huolto Oy / Matti" value="${escapeHtml(ev ? ev.performed_by || '' : '')}" />
+      <label for="event-note">Lisätiedot (valinnainen)</label>
+      <textarea id="event-note" style="min-height:70px;">${escapeHtml(ev ? ev.note || '' : '')}</textarea>
+      <div class="form-actions">
+        <button type="submit" class="btn small">Tallenna</button>
+        <button type="button" class="btn secondary small" id="event-cancel">Peruuta</button>
+      </div>
+    </form>`;
+}
+
+function wireHistory(e) {
+  const area = document.getElementById('event-form-area');
+  const reload = () => api.getEquipment(equipmentId).then(render);
+
+  function openForm(ev) {
+    area.innerHTML = eventFormHtml(ev);
+    document.getElementById('event-title').focus();
+    document.getElementById('event-cancel').addEventListener('click', reload);
+    document.getElementById('event-form').addEventListener('submit', async (submitEvent) => {
+      submitEvent.preventDefault();
+      const data = {
+        title: document.getElementById('event-title').value,
+        event_date: document.getElementById('event-date').value,
+        performed_by: document.getElementById('event-by').value,
+        note: document.getElementById('event-note').value,
+      };
+      try {
+        if (ev) await api.updateEquipmentEvent(ev.id, data);
+        else await api.addEquipmentEvent(equipmentId, data);
+        await reload();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  }
+
+  document.getElementById('add-event-btn').addEventListener('click', () => openForm(null));
+  document.querySelectorAll('[data-edit-event]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      openForm(e.history.find((h) => h.kind === 'event' && h.id === Number(btn.dataset.editEvent)));
+    });
+  });
+  document.querySelectorAll('[data-delete-event]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Poistetaanko tämä merkintä huoltohistoriasta?')) return;
+      try {
+        await api.deleteEquipmentEvent(btn.dataset.deleteEvent);
+        await reload();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  });
 }
 
 if (!equipmentId) {

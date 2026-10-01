@@ -57,6 +57,19 @@ CREATE TABLE IF NOT EXISTS equipment_manuals (
 );
 CREATE INDEX IF NOT EXISTS idx_equipment_manuals_equipment ON equipment_manuals(equipment_id);
 
+-- Manually logged maintenance events (e.g. a technician's visit), shown in an
+-- equipment's maintenance history next to completions of its linked tasks.
+CREATE TABLE IF NOT EXISTS equipment_events (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  equipment_id  INTEGER NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+  event_date    TEXT NOT NULL,
+  title         TEXT NOT NULL,
+  performed_by  TEXT,
+  note          TEXT,
+  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_equipment_events_equipment ON equipment_events(equipment_id, event_date DESC);
+
 CREATE TABLE IF NOT EXISTS tags (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   name        TEXT NOT NULL UNIQUE,
