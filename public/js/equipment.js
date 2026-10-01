@@ -14,7 +14,7 @@ function equipmentCardHtml(e) {
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           <div class="card-meta">${manuals} · ${tasks}</div>
         </div>
-        <div>${badges.join(' ')}</div>
+        <div>${badges.join(' ')} ${warrantyBadgeHtml(e.warranty)}</div>
       </div>
       <div class="form-actions">
         <a class="btn small" href="equipment-detail.html?id=${e.id}">Avaa ohjeet</a>

@@ -5,10 +5,11 @@ const crypto = require('crypto');
 const multer = require('multer');
 const { db, UPLOADS_DIR } = require('../db/db');
 const { computeTaskCheckpoints } = require('../lib/dueDateLogic');
+const { warrantyStatus } = require('../lib/warranty');
 
 const router = express.Router();
 
-const FIELDS = ['category', 'location', 'model', 'serial_number', 'purchase_date', 'instructions', 'notes'];
+const FIELDS = ['category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions', 'notes'];
 
 function badRequest(message) {
   const err = new Error(message);
@@ -27,6 +28,9 @@ function validateEquipmentBody(body) {
   if (data.purchase_date !== null && !/^\d{4}-\d{2}-\d{2}$/.test(data.purchase_date)) {
     throw badRequest('Virheellinen hankintapäivä');
   }
+  if (data.warranty_expires !== null && !/^\d{4}-\d{2}-\d{2}$/.test(data.warranty_expires)) {
+    throw badRequest('Virheellinen takuun päättymispäivä');
+  }
   return data;
 }
 
@@ -44,6 +48,10 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
+
+function withWarranty(e) {
+  return { ...e, warranty: warrantyStatus(e.warranty_expires) };
+}
 
 function loadTasksWithCheckpoints(equipmentId) {
   const tasks = db.prepare('SELECT * FROM tasks WHERE equipment_id = ? ORDER BY title COLLATE NOCASE').all(equipmentId);
@@ -71,7 +79,7 @@ router.get('/equipment', (req, res) => {
       const tasks = loadTasksWithCheckpoints(e.id);
       const statuses = tasks.flatMap((t) => t.checkpoints.map((c) => c.status));
       return {
-        ...e,
+        ...withWarranty(e),
         manual_count: manualCounts.get(e.id) || 0,
         task_count: tasks.length,
         overdue_count: statuses.filter((s) => s === 'overdue').length,
@@ -85,8 +93,8 @@ router.post('/equipment', (req, res) => {
   const data = validateEquipmentBody(req.body);
   const result = db
     .prepare(
-      `INSERT INTO equipment (name, category, location, model, serial_number, purchase_date, instructions, notes)
-       VALUES (@name, @category, @location, @model, @serial_number, @purchase_date, @instructions, @notes)`
+      `INSERT INTO equipment (name, category, location, model, serial_number, purchase_date, warranty_expires, warranty_notes, instructions, notes)
+       VALUES (@name, @category, @location, @model, @serial_number, @purchase_date, @warranty_expires, @warranty_notes, @instructions, @notes)`
     )
     .run(data);
   res.status(201).json(db.prepare('SELECT * FROM equipment WHERE id = ?').get(result.lastInsertRowid));
@@ -109,7 +117,7 @@ router.get('/equipment/:id', (req, res) => {
     )
     .all(equipment.id);
 
-  res.json({ ...equipment, manuals, tasks, history });
+  res.json({ ...withWarranty(equipment), manuals, tasks, history });
 });
 
 router.put('/equipment/:id', (req, res) => {
@@ -119,7 +127,8 @@ router.put('/equipment/:id', (req, res) => {
   const data = validateEquipmentBody(req.body);
   db.prepare(
     `UPDATE equipment SET name = @name, category = @category, location = @location, model = @model,
-       serial_number = @serial_number, purchase_date = @purchase_date, instructions = @instructions, notes = @notes
+       serial_number = @serial_number, purchase_date = @purchase_date,
+       warranty_expires = @warranty_expires, warranty_notes = @warranty_notes, instructions = @instructions, notes = @notes
      WHERE id = @id`
   ).run({ ...data, id: existing.id });
   res.json(db.prepare('SELECT * FROM equipment WHERE id = ?').get(existing.id));

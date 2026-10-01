@@ -144,3 +144,17 @@ function historyEntryHtml(entry) {
       <div class="card-meta">${entry.completed_at}${entry.note ? ' — ' + escapeHtml(entry.note) : ''}</div>
     </div>`;
 }
+
+function warrantyBadgeHtml(warranty) {
+  if (!warranty) return '';
+  const labels = { active: 'Takuu voimassa', expiring: 'Takuu päättymässä', expired: 'Takuu päättynyt' };
+  const classes = { active: 'done', expiring: 'due', expired: 'upcoming' };
+  return `<span class="badge status-${classes[warranty.status]}">${labels[warranty.status]}</span>`;
+}
+
+function warrantyText(e) {
+  if (!e.warranty) return '';
+  const d = e.warranty.daysLeft;
+  const left = d < 0 ? 'päättynyt' : d === 0 ? 'päättyy tänään' : `${d} pv jäljellä`;
+  return `${e.warranty_expires} (${left})`;
+}

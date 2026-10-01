@@ -77,10 +77,18 @@ function migrateTaskEquipment(db) {
   db.exec(`CREATE INDEX IF NOT EXISTS idx_tasks_equipment ON tasks(equipment_id)`);
 }
 
+// Adds warranty info to equipment: expiry date and free-text terms/contact.
+function migrateEquipmentWarranty(db) {
+  const cols = db.prepare(`PRAGMA table_info(equipment)`).all().map((c) => c.name);
+  if (!cols.includes('warranty_expires')) db.exec(`ALTER TABLE equipment ADD COLUMN warranty_expires TEXT`);
+  if (!cols.includes('warranty_notes')) db.exec(`ALTER TABLE equipment ADD COLUMN warranty_notes TEXT`);
+}
+
 function runMigrations(db) {
   migrateMonthlyRecurrence(db);
   migrateIntervalFirstDue(db);
   migrateTaskEquipment(db);
+  migrateEquipmentWarranty(db);
 }
 
 module.exports = { runMigrations };

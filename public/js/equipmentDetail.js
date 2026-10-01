@@ -7,10 +7,12 @@ function factsHtml(e) {
     ['Merkki ja malli', e.model],
     ['Sarjanumero', e.serial_number],
     ['Hankintapäivä', e.purchase_date],
+    ['Takuu', warrantyText(e)],
+    ['Takuun tiedot', e.warranty_notes],
   ].filter(([, v]) => v);
   if (rows.length === 0) return '';
   return `<dl class="equipment-facts">${rows
-    .map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`)
+    .map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}${k === 'Takuu' ? ' ' + warrantyBadgeHtml(e.warranty) : ''}</dd>`)
     .join('')}</dl>`;
 }
 
