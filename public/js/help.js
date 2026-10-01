@@ -4,7 +4,10 @@
     <p>Kalle Kotiapuri pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
 
     <h3>Siirtyminen sovelluksessa</h3>
-    <p>"🏡 Kalle Kotiapuri" -logo vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
+    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
+
+    <h3>Kalle ja hänen tunnelmansa</h3>
+    <p>Etusivun ylälaidassa Kalle seuraa tilannetta ja kommentoi sitä puhekuplassa. Kun kaikki on tehty, Kalle on innoissaan. Kun tehtäviä on myöhässä, hän huolestuu, uupuu ja lopulta surullisena kaipaa apuasi.</p>
 
     <h3>Vuosikello</h3>
     <p>Etusivun kello näyttää vuoden neljä vuodenaikaa. Väri kertoo tilanteen:</p>

@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kalle Kotiapuri — Vuosikello</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="site">
-    <a href="index.html" class="brand"><h1>🏡 Kalle Kotiapuri</h1></a>
+    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
     <nav>
       <a href="tasks.html">Kaikki tehtävät</a>
       <a href="history.html">Historia</a>
@@ -20,7 +22,10 @@
       <a class="btn" href="task-form.html">+ Lisää tehtävä</a>
     </div>
 
-    <div class="clock-wrap"><div id="clock"></div></div>
+    <div class="hero">
+      <section id="kalle" class="kalle" aria-live="polite" hidden></section>
+      <div class="clock-wrap"><div id="clock"></div></div>
+    </div>
 
     <section id="quarter-panel-section" style="display:none;">
       <div class="card" id="quarter-panel"></div>
@@ -47,6 +52,7 @@
 
   <script src="js/api.js"></script>
   <script src="js/help.js"></script>
+  <script src="js/kalleMood.js"></script>
   <script src="js/clock.js"></script>
   <script src="js/dashboard.js"></script>
 </body>

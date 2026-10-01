@@ -159,10 +159,30 @@ function renderQuarterPanelContent() {
   wireCompleteButtons(panel);
 }
 
+let kalleMood = null;
+let kalleMessage = '';
+
+function renderKalle(dashboard) {
+  const el = document.getElementById('kalle');
+  const mood = KalleMood.computeKalleMood(dashboard.overdueTasks.length, dashboard.dueTasks.length);
+  if (mood !== kalleMood) {
+    kalleMood = mood;
+    kalleMessage = KalleMood.pickMessage(mood);
+    el.className = `kalle kalle-${mood}`;
+    el.innerHTML = `
+      <div class="kalle-bubble"></div>
+      <img class="kalle-img" src="img/kalle/${mood}.png" alt="${KalleMood.ALT[mood]}" />`;
+    el.querySelector('.kalle-img').addEventListener('error', () => { el.hidden = true; });
+    el.querySelector('.kalle-bubble').textContent = kalleMessage;
+  }
+  el.hidden = false;
+}
+
 async function loadDashboard() {
   const dashboard = await api.getDashboard();
   lastDashboard = dashboard;
 
+  renderKalle(dashboard);
   renderClock(dashboard);
   renderTaskList(document.getElementById('overdue-list'), dashboard.overdueTasks, 'Ei myöhässä olevia tehtäviä.');
   renderTaskList(document.getElementById('due-list'), dashboard.dueTasks, 'Ei tällä hetkellä ajankohtaisia tehtäviä.');
