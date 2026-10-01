@@ -126,13 +126,7 @@ header.site h1 {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .kalle-img { animation: bob 3s ease-in-out infinite; transform-origin: 50% 100%; }
   .kalle-bubble { animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
-}
-
-@keyframes bob {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50% { transform: translateY(-6px) rotate(1deg); }
 }
 
 @keyframes pop {
