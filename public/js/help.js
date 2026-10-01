@@ -4,7 +4,7 @@
     <p>Kalle Kotiapuri pitää kirjaa kodin määräaikaishuolloista: mitä pitää tehdä, milloin, ja mitä on jo tehty.</p>
 
     <h3>Siirtyminen sovelluksessa</h3>
-    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista), "Laitteet" (laitteet ja niiden ohjeet) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
+    <p>Kallen kasvokuva ja nimi ("Kalle Kotiapuri") vasemmassa yläkulmassa vie aina etusivun vuosikelloon. Yläpalkin muut linkit: "Kaikki tehtävät" (koko tehtävälista), "Laitteet" (laitteet ja niiden ohjeet), "Materiaalit" (kodissa käytetyt materiaalit) ja "Historia" (kaikki tekokerrat). Pyöreä "?"-painike avaa tämän ohjeen miltä tahansa sivulta.</p>
 
     <h3>Kalle ja hänen tunnelmansa</h3>
     <p>Etusivun ylälaidassa Kalle seuraa tilannetta ja kommentoi sitä puhekuplassa. Kun kaikki on tehty, Kalle on innoissaan. Kun tehtäviä on myöhässä, hän huolestuu, uupuu ja lopulta surullisena kaipaa apuasi.</p>
@@ -41,6 +41,10 @@
     <h3>Laitteet</h3>
     <p>"Laitteet"-sivulle voi tallentaa kodin laitteet (esim. lämmitysjärjestelmä, ilmanvaihtokone) ja liittää niihin käyttöohjeet: lataa laitteen mukana tullut tai netistä löytämäsi PDF-ohje, ja kirjoita halutessasi omat ohjeet ja muistiinpanot samaan kenttään (tukee Markdown-muotoilua). Laitteen sivulla PDF- ja kuvamuotoiset käyttöohjeet avautuvat suoraan esikatseluikkunaan, jota voi selata poistumatta sovelluksesta (esikatselun voi piilottaa, ja ohjeen voi avata myös omaan ikkunaansa).</p>
     <p>Tehtävän muokkauksessa voi valita "Laite", jolloin tehtävä näkyy laitteen sivulla ja sen tekokerrat kertyvät laitteen huoltohistoriaksi. Laitteelle voi tallentaa takuun päättymispäivän ja takuun ehdot. Laitteen kortti ja sivu näyttävät, onko takuu voimassa, päättymässä (alle 90 päivää) vai päättynyt — näin muistat vaatia ilmaisen korjauksen, kun takuu vielä on voimassa. Kun tehtävään valitaan laite, laitteen käyttöohjeet sekä ohjeet ja muistiinpanot näkyvät suoraan tehtävän sivulla — mitään ei tarvitse ladata kahdesti. Laitteet-sivu näyttää laitteet ruudukkona, jossa jokaisella on tyyppiä vastaava kuvake (valitse oma kuvake laitteen muokkauksessa, tai jätä "Automaattinen"). Sijainti- ja Liittyy-suodattimilla rajaat näkyviin vain tietyn tilan tai aihepiirin laitteet. Laitteen ruudusta näkee yhdellä silmäyksellä, mitä laitteelle on tallennettu. Laitteen sivun Huoltohistoriaan voi lisätä myös omia merkintöjä (\"+ Lisää merkintä\"), esimerkiksi kun huoltomies on käynyt tekemässä jotain — merkintään tulee päivämäärä, kuvaus ja halutessasi tekijä ja lisätiedot. Ne näkyvät samassa aikajärjestyksessä kuin tehtävien tekokerrat, ja niitä voi muokata ja poistaa. Laitteen poistaminen ei poista siihen liitettyjä tehtäviä.</p>
+
+    <h3>Materiaalit</h3>
+    <p>"Materiaalit"-sivu on kodin tietopankki: tallenna sinne kodissa käytetyt materiaalit, jotta tiedät esimerkiksi vuosien päästä, mikä ulkomaali, väri tai saumausaine talossa on. Jokaiselle materiaalille voi kirjata tyypin, käyttökohteen, merkin ja tuotteen, värin nimen ja koodin (sekä värinäytteen), kiillon, määrän, ostopaikan ja -päivän sekä muistiinpanot. Liitä mukaan kuva purkin etiketistä, tuoteseloste tai kuitti.</p>
+    <p>Materiaalit näkyvät ruudukkona, jossa jokaisella on aihetta vastaava kuvake (voit valita myös oman). Hakukenttä etsii nimestä, merkistä, väristä ja muistiinpanoista, ja Tyyppi- ja Käyttökohde-suodattimilla rajaat listan.</p>
 
     <h3>Historia</h3>
     <p>Etusivun "Viimeksi tehdyt" -osio näyttää viisi tuoreinta tekokertaa, ja "Historia"-sivu koko listan aikajärjestyksessä. Yksittäisen tehtävän omalla muokkaussivulla näkyy vain sen tehtävän tekokerrat, ja vahingossa tehdyn merkinnän voi kumota "Kumoa"-painikkeella.</p>

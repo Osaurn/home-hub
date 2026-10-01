@@ -70,6 +70,37 @@ CREATE TABLE IF NOT EXISTS equipment_events (
 );
 CREATE INDEX IF NOT EXISTS idx_equipment_events_equipment ON equipment_events(equipment_id, event_date DESC);
 
+-- Knowledge base of materials used around the house (paints, grout, tiles…).
+CREATE TABLE IF NOT EXISTS materials (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  name          TEXT NOT NULL,
+  icon          TEXT,
+  category      TEXT,
+  location      TEXT,
+  brand         TEXT,
+  product       TEXT,
+  color_name    TEXT,
+  color_code    TEXT,
+  color_hex     TEXT,
+  finish        TEXT,
+  supplier      TEXT,
+  purchased_at  TEXT,
+  quantity      TEXT,
+  notes         TEXT,
+  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS material_files (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  material_id  INTEGER NOT NULL REFERENCES materials(id) ON DELETE CASCADE,
+  filename     TEXT NOT NULL,
+  stored_path  TEXT NOT NULL,
+  mime_type    TEXT,
+  size_bytes   INTEGER,
+  uploaded_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_material_files_material ON material_files(material_id);
+
 CREATE TABLE IF NOT EXISTS tags (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   name        TEXT NOT NULL UNIQUE,

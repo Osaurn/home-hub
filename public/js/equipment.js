@@ -23,20 +23,6 @@ function saveFilters() {
   }
 }
 
-// "Ullakko" and "ullakko " are the same place.
-function filterKey(value) {
-  return (value || '').trim().toLowerCase();
-}
-
-function distinctOptions(field) {
-  const seen = new Map();
-  for (const e of allEquipment) {
-    const key = filterKey(e[field]);
-    if (key && !seen.has(key)) seen.set(key, key.charAt(0).toUpperCase() + e[field].trim().slice(1));
-  }
-  return [...seen].map(([key, label]) => ({ key, label })).sort((a, b) => a.label.localeCompare(b.label, 'fi'));
-}
-
 function equipmentTileHtml(e) {
   const badges = [];
   if (e.overdue_count > 0) badges.push(`<span class="badge status-overdue">Myöhässä ${e.overdue_count}</span>`);
@@ -72,13 +58,13 @@ function equipmentTileHtml(e) {
 
 function renderFilters() {
   const bar = document.getElementById('equipment-filters');
-  const rows = FILTER_ROWS.map((row) => ({ ...row, options: distinctOptions(row.field) })).filter(
+  const rows = FILTER_ROWS.map((row) => ({ ...row, options: distinctOptions(allEquipment, row.field) })).filter(
     (row) => row.options.length >= 2
   );
 
   // Drop a saved filter whose value no longer exists.
   for (const row of FILTER_ROWS) {
-    if (filters[row.field] && !distinctOptions(row.field).some((o) => o.key === filters[row.field])) {
+    if (filters[row.field] && !distinctOptions(allEquipment, row.field).some((o) => o.key === filters[row.field])) {
       filters[row.field] = null;
     }
   }

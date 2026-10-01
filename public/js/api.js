@@ -37,6 +37,22 @@ const api = {
   addEquipmentEvent: (equipmentId, data) => api.request('POST', `/api/equipment/${equipmentId}/events`, data),
   updateEquipmentEvent: (id, data) => api.request('PUT', `/api/events/${id}`, data),
   deleteEquipmentEvent: (id) => api.request('DELETE', `/api/events/${id}`),
+  getMaterials: () => api.request('GET', '/api/materials'),
+  getMaterial: (id) => api.request('GET', `/api/materials/${id}`),
+  createMaterial: (data) => api.request('POST', '/api/materials', data),
+  updateMaterial: (id, data) => api.request('PUT', `/api/materials/${id}`, data),
+  deleteMaterial: (id) => api.request('DELETE', `/api/materials/${id}`),
+  deleteMaterialFile: (id) => api.request('DELETE', `/api/material-files/${id}`),
+  async uploadMaterialFiles(materialId, files) {
+    const formData = new FormData();
+    for (const file of files) formData.append('files', file);
+    const res = await fetch(`/api/materials/${materialId}/files`, { method: 'POST', body: formData });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Virhe (${res.status})`);
+    }
+    return res.json();
+  },
   deleteManual: (id) => api.request('DELETE', `/api/manuals/${id}`),
   async uploadManuals(equipmentId, files) {
     const formData = new FormData();
@@ -160,4 +176,9 @@ function warrantyText(e) {
   const d = e.warranty.daysLeft;
   const left = d < 0 ? 'päättynyt' : d === 0 ? 'päättyy tänään' : `${d} pv jäljellä`;
   return `${e.warranty_expires} (${left})`;
+}
+
+function colorSwatchHtml(hex) {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex || '')) return '';
+  return `<span class="color-swatch" style="background:${hex}" title="${hex}"></span>`;
 }

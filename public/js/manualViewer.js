@@ -12,8 +12,8 @@ function previewOpen() {
   }
 }
 
-function viewerHtml(m) {
-  const url = `/api/manuals/${m.id}`;
+function viewerHtml(m, urlFor) {
+  const url = urlFor(m);
   const frame =
     m.mime_type === 'application/pdf'
       ? `<iframe class="manual-frame" src="${url}#view=FitH" title="${escapeHtml(m.filename)}"></iframe>`
@@ -30,9 +30,10 @@ function viewerHtml(m) {
 // should only appear when the user asks for it).
 function renderManualViewer(container, manuals, options = {}) {
   const collapsedByDefault = Boolean(options.collapsedByDefault);
+  const urlFor = options.urlFor || ((m) => `/api/manuals/${m.id}`);
   let openState = !collapsedByDefault;
   if (manuals.length === 0) {
-    container.innerHTML = '<p class="muted">Ei käyttöohjeita. Lisää niitä muokkaussivulta.</p>';
+    container.innerHTML = `<p class="muted">${options.emptyText || 'Ei käyttöohjeita. Lisää niitä muokkaussivulta.'}</p>`;
     return;
   }
   const previewable = manuals.filter(isPreviewable);
@@ -57,12 +58,12 @@ function renderManualViewer(container, manuals, options = {}) {
       : '';
     const otherLinks = others.length
       ? `<ul class="attachment-list">${others
-          .map((m) => `<li><a href="/api/manuals/${m.id}" target="_blank">${escapeHtml(m.filename)}</a></li>`)
+          .map((m) => `<li><a href="${urlFor(m)}" target="_blank">${escapeHtml(m.filename)}</a></li>`)
           .join('')}</ul>`
       : '';
     container.innerHTML = `
       ${selected ? `<div class="field-header">${chips}${toggle}</div>` : ''}
-      ${selected && open ? `<div class="manual-viewer">${viewerHtml(selected)}</div>` : ''}
+      ${selected && open ? `<div class="manual-viewer">${viewerHtml(selected, urlFor)}</div>` : ''}
       ${otherLinks}`;
 
     container.querySelectorAll('[data-manual-id]').forEach((btn) => {

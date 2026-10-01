@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Materiaali — Kalle Kotiapuri</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site">
+    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
+    <nav>
+      <a href="tasks.html">Kaikki tehtävät</a>
+      <a href="equipment.html">Laitteet</a>
+      <a href="materials.html" class="active">Materiaalit</a>
+      <a href="history.html">Historia</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="page-title">Uusi materiaali</h2>
+
+    <form class="task-form" id="material-form">
+      <label for="name">Nimi</label>
+      <input type="text" id="name" required placeholder="esim. Ulkomaali, pääty" />
+
+      <label>Kuvake</label>
+      <div class="icon-picker" id="icon-picker"></div>
+
+      <label for="category">Tyyppi</label>
+      <input type="text" id="category" list="category-options" placeholder="esim. Maalit, Saumaus ja tiivistys" />
+      <datalist id="category-options"></datalist>
+
+      <label for="location">Käyttökohde</label>
+      <input type="text" id="location" list="location-options" placeholder="esim. Ulkoseinät, Kylpyhuone" />
+      <datalist id="location-options"></datalist>
+
+      <label for="brand">Merkki</label>
+      <input type="text" id="brand" placeholder="esim. Tikkurila" />
+
+      <label for="product">Tuote</label>
+      <input type="text" id="product" placeholder="esim. Valtti Plus" />
+
+      <label for="color_name">Värin nimi</label>
+      <input type="text" id="color_name" placeholder="esim. Punamulta" />
+
+      <label for="color_code">Värikoodi</label>
+      <input type="text" id="color_code" placeholder="esim. NCS S 5040-Y80R" />
+
+      <label>Värinäyte</label>
+      <div class="color-row">
+        <label class="inline-check"><input type="checkbox" id="has-color" /> Näytä värinäyte</label>
+        <input type="color" id="color_hex" value="#888888" disabled />
+      </div>
+
+      <label for="finish">Kiilto / pinta</label>
+      <input type="text" id="finish" placeholder="esim. Matta, puolikiiltävä" />
+
+      <label for="quantity">Määrä</label>
+      <input type="text" id="quantity" placeholder="esim. 2 × 9 l" />
+
+      <label for="supplier">Ostopaikka</label>
+      <input type="text" id="supplier" placeholder="esim. Rautia" />
+
+      <label for="purchased_at">Ostopäivä</label>
+      <input type="date" id="purchased_at" />
+
+      <div class="field-header">
+        <label for="notes">Muistiinpanot</label>
+        <button type="button" class="btn secondary small" id="notes-toggle">Esikatselu</button>
+      </div>
+      <textarea id="notes" placeholder="Levitystapa, kerrosten määrä, vinkit… (tukee Markdown-muotoilua)"></textarea>
+      <div class="instructions-preview" id="notes-preview" style="display:none;"></div>
+
+      <h2 class="section-title">Kuvat ja tiedostot</h2>
+      <div class="card">
+        <input type="file" id="file-input" multiple />
+        <p class="muted" id="file-hint">Esim. kuva purkin etiketistä, tuoteseloste tai kuitti. Valitut tiedostot tallentuvat, kun painat Tallenna.</p>
+        <ul class="attachment-list" id="file-list"></ul>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Tallenna</button>
+        <a class="btn secondary" id="cancel-link" href="materials.html">Peruuta</a>
+        <button type="button" class="btn danger" id="delete-btn" style="display:none;">Poista materiaali</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="vendor/marked.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/help.js"></script>
+  <script src="js/materialIcons.js"></script>
+  <script src="js/materialForm.js"></script>
+</body>
+</html>

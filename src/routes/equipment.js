@@ -1,17 +1,19 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const multer = require('multer');
-const { db, UPLOADS_DIR } = require('../db/db');
+const { db } = require('../db/db');
+const {
+  createUploader,
+  storedPathFor,
+  removeUploadedFiles,
+  removeOwnerFolder,
+  removeStoredFile,
+  sendStoredFile,
+} = require('../lib/fileUploads');
 const { computeTaskCheckpoints } = require('../lib/dueDateLogic');
 const { warrantyStatus } = require('../lib/warranty');
 
 const router = express.Router();
 
 const FIELDS = ['icon', 'category', 'location', 'model', 'serial_number', 'purchase_date', 'warranty_expires', 'warranty_notes', 'instructions'];
-
-const INLINE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 
 function badRequest(message) {
   const err = new Error(message);
@@ -41,18 +43,7 @@ function validateEquipmentBody(body) {
 
 // Manuals live under uploads/equipment/<id>/ so they never collide with
 // the numeric per-task attachment folders.
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    const dir = path.join(UPLOADS_DIR, 'equipment', String(Number(req.params.id)));
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename(req, file, cb) {
-    const safeName = file.originalname.replace(/[/\\]/g, '_');
-    cb(null, `${crypto.randomUUID()}-${safeName}`);
-  },
-});
-const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
+const upload = createUploader('equipment');
 
 function withWarranty(e) {
   return { ...e, warranty: warrantyStatus(e.warranty_expires) };
@@ -171,7 +162,7 @@ router.delete('/equipment/:id', (req, res) => {
 
   db.prepare('DELETE FROM equipment WHERE id = ?').run(equipment.id);
   // Manual rows are gone via cascade; remove the whole manuals folder.
-  fs.rm(path.join(UPLOADS_DIR, 'equipment', String(equipment.id)), { recursive: true, force: true }, () => {});
+  removeOwnerFolder('equipment', equipment.id);
   res.status(204).end();
 });
 
@@ -209,7 +200,7 @@ router.delete('/events/:id', (req, res) => {
 router.post('/equipment/:id/manuals', upload.array('files', 10), (req, res) => {
   const equipment = db.prepare('SELECT id FROM equipment WHERE id = ?').get(req.params.id);
   if (!equipment) {
-    for (const f of req.files || []) fs.rm(f.path, { force: true }, () => {});
+    removeUploadedFiles(req.files);
     return res.status(404).json({ error: 'Laitetta ei löytynyt' });
   }
 
@@ -218,7 +209,7 @@ router.post('/equipment/:id/manuals', upload.array('files', 10), (req, res) => {
      VALUES (?, ?, ?, ?, ?)`
   );
   const manuals = (req.files || []).map((file) => {
-    const storedPath = path.join('equipment', String(equipment.id), path.basename(file.path));
+    const storedPath = storedPathFor('equipment', equipment.id, file);
     const result = insert.run(equipment.id, file.originalname, storedPath, file.mimetype, file.size);
     return db.prepare('SELECT * FROM equipment_manuals WHERE id = ?').get(result.lastInsertRowid);
   });
@@ -229,19 +220,7 @@ router.get('/manuals/:id', (req, res) => {
   const manual = db.prepare('SELECT * FROM equipment_manuals WHERE id = ?').get(req.params.id);
   if (!manual) return res.status(404).json({ error: 'Ohjetta ei löytynyt' });
 
-  const filePath = path.join(UPLOADS_DIR, manual.stored_path);
-  const onError = (err) => {
-    if (err && !res.headersSent) res.status(404).json({ error: 'Tiedostoa ei löytynyt' });
-  };
-  // PDFs and common images are served inline so they can be previewed in
-  // the app; everything else (never HTML/SVG) downloads.
-  if (INLINE_TYPES.has(manual.mime_type)) {
-    res.type(manual.mime_type);
-    res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(manual.filename)}`);
-    res.sendFile(filePath, onError);
-  } else {
-    res.download(filePath, manual.filename, onError);
-  }
+  sendStoredFile(res, manual);
 });
 
 router.delete('/manuals/:id', (req, res) => {
@@ -249,7 +228,7 @@ router.delete('/manuals/:id', (req, res) => {
   if (!manual) return res.status(404).json({ error: 'Ohjetta ei löytynyt' });
 
   db.prepare('DELETE FROM equipment_manuals WHERE id = ?').run(manual.id);
-  fs.rm(path.join(UPLOADS_DIR, manual.stored_path), { force: true }, () => {});
+  removeStoredFile(manual.stored_path);
   res.status(204).end();
 });
 
