@@ -10,19 +10,13 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="site">
-    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
-    <nav>
-      <a href="tasks.html" class="active">Tehtävät</a>
-      <a href="equipment.html">Laitteet</a>
-      <a href="materials.html">Materiaalit</a>
-      <a href="history.html">Päiväkirja</a>
-    </nav>
-  </header>
+  <header class="site"></header>
 
   <main>
-    <div class="form-actions" style="margin-bottom: 16px;">
-      <a class="btn" href="task-form.html">+ Lisää tehtävä</a>
+    <div class="page-hero">
+      <h2 class="page-title">Tehtävät</h2>
+      <p class="page-sub">Kaikki kodin määräaikaishuollot yhdessä paikassa.</p>
+      <div class="form-actions"><a class="btn" href="task-form.html">+ Lisää tehtävä</a></div>
     </div>
     <p class="muted tag-filter-hint" id="tag-filter-hint" style="display:none;">Paina tunnistetta suodattaaksesi, tai × poistaaksesi sen kokonaan.</p>
     <div class="tag-filter-bar" id="tag-filter-bar"></div>
@@ -30,6 +24,7 @@
   </main>
 
   <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/help.js"></script>
   <script src="js/tasks.js"></script>
 </body>

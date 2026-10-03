@@ -27,7 +27,7 @@ function render(m) {
 
   document.getElementById('detail').innerHTML = `
     <div class="card-header">
-      <h2 style="margin:0;"><span aria-hidden="true">${MaterialIcons.materialIcon(m)}</span> ${escapeHtml(m.name)}</h2>
+      <h2 class="page-title"><span aria-hidden="true">${MaterialIcons.materialIcon(m)}</span> ${escapeHtml(m.name)}</h2>
       <a class="btn secondary small" href="material-form.html?id=${m.id}">Muokkaa</a>
     </div>
     ${factsHtml(m)}

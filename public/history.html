@@ -10,24 +10,19 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="site">
-    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
-    <nav>
-      <a href="tasks.html">Tehtävät</a>
-      <a href="equipment.html">Laitteet</a>
-      <a href="materials.html">Materiaalit</a>
-      <a href="history.html" class="active">Päiväkirja</a>
-    </nav>
-  </header>
+  <header class="site"></header>
 
   <main>
-    <h2>Päiväkirja</h2>
-    <p class="muted">Kaikkien tehtävien tekokerrat aikajärjestyksessä, uusimmat ensin.</p>
+    <div class="page-hero">
+      <h2 class="page-title">Päiväkirja</h2>
+      <p class="page-sub">Kaikkien tehtävien tekokerrat aikajärjestyksessä, uusimmat ensin.</p>
+    </div>
     <input type="search" id="history-search" class="search-input" placeholder="Hae päiväkirjasta (tehtävä, laite, muistiinpano, päivämäärä…)" aria-label="Hae päiväkirjasta" />
     <div id="history-list"></div>
   </main>
 
   <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/help.js"></script>
   <script src="js/history.js"></script>
 </body>

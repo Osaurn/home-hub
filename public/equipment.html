@@ -10,25 +10,20 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="site">
-    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
-    <nav>
-      <a href="tasks.html">Tehtävät</a>
-      <a href="equipment.html" class="active">Laitteet</a>
-      <a href="materials.html">Materiaalit</a>
-      <a href="history.html">Päiväkirja</a>
-    </nav>
-  </header>
+  <header class="site"></header>
 
   <main>
-    <div class="form-actions" style="margin-bottom: 16px;">
-      <a class="btn" href="equipment-form.html">+ Lisää laite</a>
+    <div class="page-hero">
+      <h2 class="page-title">Laitteet</h2>
+      <p class="page-sub">Kodin laitteet, käyttöohjeet ja huoltohistoria.</p>
+      <div class="form-actions"><a class="btn" href="equipment-form.html">+ Lisää laite</a></div>
     </div>
     <div class="equipment-filters" id="equipment-filters"></div>
     <div class="equipment-grid" id="equipment-list"></div>
   </main>
 
   <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/help.js"></script>
   <script src="js/equipmentIcons.js"></script>
   <script src="js/filters.js"></script>

@@ -10,18 +10,10 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="site">
-    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
-    <nav>
-      <a href="tasks.html">Tehtävät</a>
-      <a href="equipment.html" class="active">Laitteet</a>
-      <a href="materials.html">Materiaalit</a>
-      <a href="history.html">Päiväkirja</a>
-    </nav>
-  </header>
+  <header class="site"></header>
 
   <main>
-    <h2 id="page-title">Uusi laite</h2>
+    <h2 id="page-title" class="page-title">Uusi laite</h2>
 
     <form class="task-form" id="equipment-form">
       <label for="name">Nimi</label>
@@ -84,6 +76,7 @@
   <script src="vendor/marked.js"></script>
   <script src="js/api.js"></script>
   <script src="js/backButton.js" data-fallback="equipment.html"></script>
+  <script src="js/layout.js"></script>
   <script src="js/help.js"></script>
   <script src="js/equipmentIcons.js"></script>
   <script src="js/equipmentForm.js"></script>

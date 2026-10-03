@@ -63,7 +63,7 @@
     btn.className = 'help-btn';
     btn.setAttribute('aria-label', 'Ohje');
     btn.textContent = '?';
-    nav.appendChild(btn);
+    (header.querySelector('.nav-tools') || nav).appendChild(btn);
 
     const overlay = document.createElement('div');
     overlay.className = 'help-overlay';

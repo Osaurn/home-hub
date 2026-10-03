@@ -10,15 +10,7 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="site">
-    <a href="index.html" class="brand"><img class="brand-logo" src="img/logo.png" alt="" /><h1>Kalle Kotiapuri</h1></a>
-    <nav>
-      <a href="tasks.html">Tehtävät</a>
-      <a href="equipment.html">Laitteet</a>
-      <a href="materials.html">Materiaalit</a>
-      <a href="history.html">Päiväkirja</a>
-    </nav>
-  </header>
+  <header class="site"></header>
 
   <main>
     <div class="hero">
@@ -36,8 +28,8 @@
     </section>
 
     <section>
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:28px 0 10px;">
-        <h2 class="section-title" style="margin:0;">Tehtävät nyt</h2>
+      <div class="section-head">
+        <h2 class="section-title">Tehtävät nyt</h2>
         <a class="btn small" href="task-form.html">+ Lisää tehtävä</a>
       </div>
       <div id="due-list"></div>
@@ -53,6 +45,7 @@
   </main>
 
   <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
   <script src="js/help.js"></script>
   <script src="js/kalleMood.js"></script>
   <script src="js/clock.js"></script>
